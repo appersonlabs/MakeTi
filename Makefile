@@ -1,19 +1,12 @@
 # Makefile to start Titanium Mobile project from the command line.
-# More info at http://github.com/guilhermechapiewski/titanium-jasmine
 
 PROJECT_ROOT=$(shell pwd)
 
 run-iphone:
 	@DEVICE_TYPE=iphone make run
 
-test-iphone:
-	@DEVICE_TYPE=iphone make test
-
 run-ipad:
 	@DEVICE_TYPE=ipad make run
-
-test-ipad:
-	@DEVICE_TYPE=ipad make test
 
 run-android:
 	@DEVICE_TYPE=android make run
@@ -25,15 +18,6 @@ run:
 	fi
 	@mkdir -p ${PROJECT_ROOT}/${PROJECT_NAME}/Resources/test/
 	@echo "" > ${PROJECT_ROOT}/${PROJECT_NAME}/Resources/test/enabled.js
-	@make launch-titanium
-
-test:
-	@if [ "${DEVICE_TYPE}" == "" ]; then\
-		echo "Please run \"make test-[iphone|ipad]\" instead.";\
-		exit 1;\
-	fi
-	@mkdir -p ${PROJECT_ROOT}/${PROJECT_NAME}/Resources/test/
-	@echo "sampleapp.tests_enabled = true;" > ${PROJECT_ROOT}/${PROJECT_NAME}/Resources/test/enabled.js
 	@make launch-titanium
 
 clean:
