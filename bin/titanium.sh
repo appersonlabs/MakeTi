@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Utility script to start Titanium Mobile project from the command line.
-# More info at http://github.com/guilhermechapiewski/titanium-jasmine
 
 PROJECT_ROOT=${PROJECT_ROOT:-../}
 APP_DEVICE=${DEVICE_TYPE}

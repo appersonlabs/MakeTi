@@ -1,0 +1,27 @@
+h1. MakeTi
+
+h2. How to start the project
+
+Add the files from this repo to the root dir of your project and type one of the following in a terminal:
+
+<pre>$ make run-iphone</pre>
+
+_* To change the SDK version, change the TI_SDK_VERSION configuration in the bin/titanium.sh script._
+
+To run the application on the iPad, type:
+
+<pre>$ make clean && make run-ipad</pre>
+
+To run the application on Android, type:
+
+_* You must have android, applicable sdk versions, and at least one emulator device created and running._
+
+<pre>$ make clean && make run-android</pre>
+
+_* You just have to use "make clean" before the run command if you change the device type. If you're using the same device between executions, it's not necessary to execute "make clean" because it will force Titanium to re-compile the entire project again, which is considerably slow._
+
+h2. License
+
+Licensed under Apache Public License (Version 2).
+
+Originally Developed by "Guilherme Chapiewski":http://guilherme.it. Extended and edited by "Matt Apperson":http://mattapperson.com.
