@@ -4,7 +4,7 @@
 
 PROJECT_ROOT=${PROJECT_ROOT:-../}
 APP_DEVICE=${DEVICE_TYPE}
-TI_SDK_VERSION="1.8.0.1"
+TI_SDK_VERSION=`cat tiapp.xml | grep "<sdk-version>" | sed -e "s/<\/*sdk-version>//g"`
 TI_DIR="~/Library/Application\ Support/Titanium"
 
 # Both iOS and Android SDKs are linked in this directory
