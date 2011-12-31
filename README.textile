@@ -20,6 +20,16 @@ _* You must have android, applicable sdk versions, and at least one emulator dev
 
 _* You just have to use "make clean" before the run command if you change the device type. If you're using the same device between executions, it's not necessary to execute "make clean" because it will force Titanium to re-compile the entire project again, which is considerably slow._
 
+h2. Options
+
+You can adjust the iphone sdk using the iphone argument like so:
+
+<pre>$ make run-iphone iphone=4.3</pre>
+
+You can adjust the android sdk using the iphone argument like so:
+
+<pre>$ make run-android android=10</pre>
+
 h2. License
 
 Licensed under Apache Public License (Version 2).

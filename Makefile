@@ -2,6 +2,10 @@
 
 PROJECT_ROOT=$(shell pwd)
 
+iphone=$(iphone)
+
+android=$(android)
+
 run-iphone:
 	@DEVICE_TYPE=iphone make run
 

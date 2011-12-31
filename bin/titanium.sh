@@ -27,8 +27,13 @@ do
     fi
 done
 
+if [ "${TI_SDK_VERSION}" == "" ]; then
+	echo "[ERROR] sdk-version is not defined in tiapp.xml"
+	exit 1
+fi
+
 # Both iOS and Android SDKs are linked in this directory
-TI_ASSETS_DIR="$TI_DIR/mobilesdk/osx/${TI_SDK_VERSION}"
+TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/${TI_SDK_VERSION}"
 
 if [ -d "${TI_DIR}" ]; then
 	echo "Titanium SDK ${TI_SDK_VERSION} found..."
@@ -38,13 +43,16 @@ else
 fi
 
 # iPhone settings
-IPHONE_SDK_VERSION="5.0"
+if [ "${iphone}" == "" ]; then
+	iphone="5.0"
+fi
 TI_IPHONE_DIR="${TI_ASSETS_DIR}/iphone"
 TI_IPHONE_BUILD="${TI_IPHONE_DIR}/builder.py"
 
 # Android settings
-ANDROID_SDK_VERSION="2.3.3"
-ANDROID_ADB_ID="10"
+if [ "${android}" == "" ]; then
+	android="10"
+fi
 TI_ANDROID_DIR="${TI_ASSETS_DIR}/android"
 TI_ANDROID_BUILD="${TI_ANDROID_DIR}/builder.py"
 ANDROID_SDK_PATH='~/Android'
@@ -64,8 +72,9 @@ if [ "APP_ID" == "" ] || [ "APP_NAME" == "" ]; then
 fi
 
 if [ ${APP_DEVICE} == "iphone" ]; then
+	echo "${TI_IPHONE_BUILD}"
 	killall "iPhone Simulator"
-	bash -c "${TI_IPHONE_BUILD} run ${PROJECT_ROOT}/ ${IPHONE_SDK_VERSION} ${APP_ID} ${APP_NAME} ${APP_DEVICE}" \
+	bash -c "'${TI_IPHONE_BUILD}' run ${PROJECT_ROOT}/ ${iphone} ${APP_ID} ${APP_NAME} ${APP_DEVICE}" \
 	| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 elif [ ${APP_DEVICE} == "android" ]; then
 	# Check for Android Virtual Device (AVD)
@@ -74,10 +83,10 @@ elif [ ${APP_DEVICE} == "android" ]; then
 	  	echo "[INFO] Emulator already running, going to launch with that."
 	  else
 	  	echo "[ERROR] Could not find a running emulator."
-	  	echo "[ERROR] Run this command in a separate terminal session: ${ANDROID_SDK_PATH}/tools/emulator-arm -avd ${ANDROID_API_LEVEL}"
+	  	echo "[ERROR] Run this command in a separate terminal session: ${ANDROID_SDK_PATH}/tools/emulator-arm -avd ${android}"
 	  	exit 1
 	fi
-	ARGS="${APP_NAME}  ${ANDROID_SDK_PATH} ${PROJECT_ROOT}/ ${APP_ID} ${ANDROID_ADB_ID}"
+	ARGS="${APP_NAME}  ${ANDROID_SDK_PATH} ${PROJECT_ROOT}/ ${APP_ID} ${android}"
 	bash -c "${TI_ANDROID_BUILD} simulator ${ARGS}" \
 	| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 else
