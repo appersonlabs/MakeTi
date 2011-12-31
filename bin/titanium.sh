@@ -32,6 +32,10 @@ if [ "${TI_SDK_VERSION}" == "" ]; then
 	exit 1
 fi
 
+if [ "${APP_DEVICE}" == "" ]; then
+	APP_DEVICE="iphone"
+fi
+
 # Both iOS and Android SDKs are linked in this directory
 TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/${TI_SDK_VERSION}"
 

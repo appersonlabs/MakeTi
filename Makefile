@@ -6,28 +6,34 @@ iphone=$(iphone)
 
 android=$(android)
 
-run-iphone:
-	@DEVICE_TYPE=iphone make run
+DEVICE_TYPE=$(platform)
 
-run-ipad:
-	@DEVICE_TYPE=ipad make run
-
-run-android:
-	@DEVICE_TYPE=android make run
+help:
+	@echo ""
+	@echo "Welcome to MakeTi, the make system for Titanium!"
+	@echo ""
+	@echo "Your options are as follows:"
+	@echo ""
+	@echo "   $ make run - (will run as iphone for default, use the platform flag to set the platform)"
+	@echo "   $ make clean - (will clean your build directory)"
+	@echo ""
 
 run:
 	@if [ "${DEVICE_TYPE}" == "" ]; then\
-		echo "Please run \"make run-[iphone|ipad]\" instead.";\
-		exit 1;\
+		echo "No platform selected... running as iphone.";\
 	fi
 	@make launch-titanium
 
 clean:
-	@rm -rf ${PROJECT_ROOT}/${PROJECT_NAME}/build/iphone/*
-	@mkdir -p ${PROJECT_ROOT}/${PROJECT_NAME}/build/iphone/
-	@echo "Deleted: ${PROJECT_ROOT}/${PROJECT_NAME}/build/iphone/*"
+	@rm -rf ${PROJECT_ROOT}/build/iphone/*
+	@mkdir -p ${PROJECT_ROOT}/build/iphone/
+	@echo "Deleted: ${PROJECT_ROOT}/build/iphone/*"
+	@rm -rf ${PROJECT_ROOT}/build/android/*
+	@mkdir -p ${PROJECT_ROOT}/build/android/
+	@echo "Deleted: ${PROJECT_ROOT}/build/android/*"
 
 launch-titanium:
-	@echo "Building with Titanium... (DEVICE_TYPE:${DEVICE_TYPE})"
+	@echo "Building with Titanium..."
 	@mkdir -p ${PROJECT_ROOT}/${PROJECT_NAME}/build/iphone/
-	@PROJECT_NAME=${PROJECT_NAME} PROJECT_ROOT=${PROJECT_ROOT} DEVICE_TYPE=${DEVICE_TYPE} bash ${PROJECT_ROOT}/bin/titanium.sh
+	@mkdir -p ${PROJECT_ROOT}/${PROJECT_NAME}/build/android/
+	PROJECT_ROOT=${PROJECT_ROOT} DEVICE_TYPE=${DEVICE_TYPE} bash ${PROJECT_ROOT}/bin/titanium.sh
