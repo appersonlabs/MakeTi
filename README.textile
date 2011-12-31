@@ -6,8 +6,6 @@ Add the files from this repo to the root dir of your project and type one of the
 
 <pre>$ make run-iphone</pre>
 
-_* To change the SDK version, change the TI_SDK_VERSION configuration in the bin/titanium.sh script._
-
 To run the application on the iPad, type:
 
 <pre>$ make clean && make run-ipad</pre>
@@ -34,4 +32,5 @@ h2. License
 
 Licensed under Apache Public License (Version 2).
 
-Originally Developed by "Guilherme Chapiewski":http://guilherme.it. Extended and edited by "Matt Apperson":http://mattapperson.com.
+ Developed by "Matt Apperson":http://mattapperson.com.
+ Based on the work of "Guilherme Chapiewski":http://guilherme.it.
