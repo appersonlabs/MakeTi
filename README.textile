@@ -4,29 +4,29 @@ h2. How to start the project
 
 Add the files from this repo to the root dir of your project and type one of the following in a terminal:
 
-<pre>$ make run-iphone</pre>
+<pre>$ make run</pre>
 
-To run the application on the iPad, type:
+By default, this will build for iPhone using the latest SDK
 
-<pre>$ make clean && make run-ipad</pre>
+<pre>$ make clean</pre>
 
-To run the application on Android, type:
+clean delets the contents of your build folder so your next build will be complete.
 
-_* You must have android, applicable sdk versions, and at least one emulator device created and running._
-
-<pre>$ make clean && make run-android</pre>
-
-_* You just have to use "make clean" before the run command if you change the device type. If you're using the same device between executions, it's not necessary to execute "make clean" because it will force Titanium to re-compile the entire project again, which is considerably slow._
+_* It's not necessary to execute "make clean" on every time because it will force Titanium to re-compile the entire project again, which can be slow._
 
 h2. Options
 
+You can change the platform by setting the platform argument like so:
+
+<pre>$ make run platform=ipad</pre>
+
 You can adjust the iphone sdk using the iphone argument like so:
 
-<pre>$ make run-iphone iphone=4.3</pre>
+<pre>$ make run iphone=4.3</pre>
 
 You can adjust the android sdk using the iphone argument like so:
 
-<pre>$ make run-android android=10</pre>
+<pre>$ make run android=10</pre>
 
 h2. License
 
