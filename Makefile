@@ -16,8 +16,6 @@ run:
 		echo "Please run \"make run-[iphone|ipad]\" instead.";\
 		exit 1;\
 	fi
-	@mkdir -p ${PROJECT_ROOT}/${PROJECT_NAME}/Resources/test/
-	@echo "" > ${PROJECT_ROOT}/${PROJECT_NAME}/Resources/test/enabled.js
 	@make launch-titanium
 
 clean:
