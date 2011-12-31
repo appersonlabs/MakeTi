@@ -15,25 +15,25 @@ help:
 	@echo "Your options are as follows:"
 	@echo ""
 	@echo "   $ make run - (will run as iphone for default, use the platform flag to set the platform)"
-	@echo "   $ make clean - (will clean your build directory)"
+	@echo "   $ make clean - (will clean your build directories)"
 	@echo ""
 
 run:
 	@if [ "${DEVICE_TYPE}" == "" ]; then\
-		echo "No platform selected... running as iphone.";\
+		echo "[ERROR] No platform selected... running as iphone.";\
 	fi
 	@make launch-titanium
 
 clean:
 	@rm -rf ${PROJECT_ROOT}/build/iphone/*
 	@mkdir -p ${PROJECT_ROOT}/build/iphone/
-	@echo "Deleted: ${PROJECT_ROOT}/build/iphone/*"
+	@echo "[DEBUG] Deleted: ${PROJECT_ROOT}/build/iphone/*"
 	@rm -rf ${PROJECT_ROOT}/build/android/*
 	@mkdir -p ${PROJECT_ROOT}/build/android/
-	@echo "Deleted: ${PROJECT_ROOT}/build/android/*"
+	@echo "[DEBUG] Deleted: ${PROJECT_ROOT}/build/android/*"
 
 launch-titanium:
-	@echo "Building with Titanium..."
+	@echo "[DEBUG] Building with Titanium..."
 	@mkdir -p ${PROJECT_ROOT}/${PROJECT_NAME}/build/iphone/
 	@mkdir -p ${PROJECT_ROOT}/${PROJECT_NAME}/build/android/
 	PROJECT_ROOT=${PROJECT_ROOT} DEVICE_TYPE=${DEVICE_TYPE} bash ${PROJECT_ROOT}/bin/titanium.sh
