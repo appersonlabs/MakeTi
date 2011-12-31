@@ -5,10 +5,37 @@
 PROJECT_ROOT=${PROJECT_ROOT:-../}
 APP_DEVICE=${DEVICE_TYPE}
 TI_SDK_VERSION=`cat tiapp.xml | grep "<sdk-version>" | sed -e "s/<\/*sdk-version>//g"`
-TI_DIR="~/Library/Application\ Support/Titanium"
+TI_DIR="Library/Application Support/Titanium"
+
+for d in /Users/*
+do
+    if [ -d "$d/${TI_DIR}" ]
+    then
+        TI_DIR="$d/${TI_DIR}"
+        echo "Titanium exists..."
+
+        break
+    else
+        echo "Titanium not found... Testing another directory"
+
+		if [ -d "$TI_DIR" ]; then
+			echo "Titanium found..."
+		else
+			echo "Titanium not found... Please make sure it is installed correctly..."
+			exit 1
+		fi
+    fi
+done
 
 # Both iOS and Android SDKs are linked in this directory
-TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/${TI_SDK_VERSION}"
+TI_ASSETS_DIR="$TI_DIR/mobilesdk/osx/${TI_SDK_VERSION}"
+
+if [ -d "${TI_DIR}" ]; then
+	echo "Titanium SDK ${TI_SDK_VERSION} found..."
+else
+	echo "Titanium SDK ${TI_SDK_VERSION} not found... "
+	exit 1
+fi
 
 # iPhone settings
 IPHONE_SDK_VERSION="5.0"
