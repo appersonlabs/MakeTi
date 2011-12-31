@@ -12,16 +12,16 @@ do
     if [ -d "$d/${TI_DIR}" ]
     then
         TI_DIR="$d/${TI_DIR}"
-        echo "Titanium exists..."
+        echo "[DEBUG] Titanium exists..."
 
         break
     else
-        echo "Titanium not found... Testing another directory"
+        echo "[DEBUG] Titanium not found... Testing another directory"
 
 		if [ -d "$TI_DIR" ]; then
-			echo "Titanium found..."
+			echo "[DEBUG] Titanium found..."
 		else
-			echo "Titanium not found... Please make sure it is installed correctly..."
+			echo "[ERROR] Titanium not found... Please make sure it is installed correctly..."
 			exit 1
 		fi
     fi
@@ -36,9 +36,9 @@ fi
 TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/${TI_SDK_VERSION}"
 
 if [ -d "${TI_DIR}" ]; then
-	echo "Titanium SDK ${TI_SDK_VERSION} found..."
+	echo "[DEBUG] Titanium SDK ${TI_SDK_VERSION} found..."
 else
-	echo "Titanium SDK ${TI_SDK_VERSION} not found... "
+	echo "[ERROR] Titanium SDK ${TI_SDK_VERSION} not found... "
 	exit 1
 fi
 
@@ -90,7 +90,7 @@ elif [ ${APP_DEVICE} == "android" ]; then
 	bash -c "${TI_ANDROID_BUILD} simulator ${ARGS}" \
 	| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 else
-	echo "not supported!"
+	echo "[ERROR] not supported!"
 	echo ${APP_DEVICE}
 fi
 
