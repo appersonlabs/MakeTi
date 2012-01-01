@@ -117,8 +117,8 @@ elif [ ${APP_DEVICE} == "web" ]; then
 	bash -c "'/usr/bin/python' '${TI_ASSETS_DIR}/mobileweb/builder.py' '${PROJECT_ROOT}' 'development'" \
 	| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 
-	echo "Launching browser..."
-	bash -c "open '${PROJECT_ROOT}/build/mobileweb/index.html'"
+	echo "Files are now located in '${PROJECT_ROOT}/build/mobileweb/' Copy to a webserver and launch index.html in a web browser"
+	# bash -c "open '${PROJECT_ROOT}/build/mobileweb/index.html'"
 
 else
 	echo "[ERROR] platform ${APP_DEVICE} is not supported!"
