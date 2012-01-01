@@ -4,7 +4,7 @@ MakeTi is a makefile script to make using the titanium CLI tools easy!
 
 It builds your code, it highlights the console output... thats it! It's like a stripped down titanium.py so that it can build your apps faster then Ti Studio or by using titanium run commands
 
-Currently only for mac (expanding that soon, and does not YET support mobile web SDK).
+Currently only for mac (expanding that soon).
 
 h2. How to start your project
 
@@ -33,6 +33,8 @@ You can adjust the iphone sdk using the iphone argument like so:
 You can adjust the android sdk using the iphone argument like so:
 
 <pre>$ make run android=10</pre>
+
+_* NOTE: Platforms supported are iphone, ipad, android and web._
 
 h2. License
 
