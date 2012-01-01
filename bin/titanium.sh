@@ -103,8 +103,22 @@ elif [ ${APP_DEVICE} == "android" ]; then
 
 elif [ ${APP_DEVICE} == "web" ]; then
 
-	echo "[ERROR] This SDK is not yet supported"
-	exit 1
+	# Web settings
+	TI_WEB_DIR="${TI_ASSETS_DIR}/mobileweb"
+
+	# make sure this SDK has mobileweb
+	if [ -d "${TI_WEB_DIR}" ]; then
+		echo "[DEBUG] Mobileweb is installed..."
+	else
+		echo "[ERROR] This Ti SDK does not support mobileweb... "
+		exit 1
+	fi
+
+	bash -c "'/usr/bin/python' '${TI_ASSETS_DIR}/mobileweb/builder.py' '${PROJECT_ROOT}' 'development'" \
+	| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
+	echo "Launching browser..."
+	bash -c "open '${PROJECT_ROOT}/build/mobileweb/index.html'"
 
 else
 	echo "[ERROR] platform ${APP_DEVICE} is not supported!"
