@@ -2,7 +2,7 @@ h1. MakeTi
 
 MakeTi is a makefile script to make using the titanium CLI tools easy!
 
-It builds your code, it highlights the console output... thats it! It's like a stripped down titanium.py
+It builds your code, it highlights the console output... thats it! It's like a stripped down titanium.py so that it can build your apps faster then Ti Studio or by using titanium run commands
 
 Currently only for mac (expanding that soon, and does not YET support mobile web SDK).
 
