@@ -42,3 +42,7 @@ Licensed under Apache Public License (Version 2).
 
  Developed by "Matt Apperson":http://mattapperson.com.
  Based on the work of "Guilherme Chapiewski":http://guilherme.it.
+
+h2. Disclaimers
+
+This is a private project of mine and currently **not supported** by Appcelerator!  If you have issues, please file them in the GitHub Issues section of the repository and I will try to get to them in a timely fashion.  Better yet, fork and improve!
