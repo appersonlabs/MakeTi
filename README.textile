@@ -6,7 +6,7 @@ It builds your code, it highlights the console output... thats it! No analytics 
 
 Currently only for mac (expanding that soon, and does not YET support mobile web SDK).
 
-h2. How to start the project
+h2. How to start your project
 
 Add the files from this repo to the root dir of your project and type one of the following in a terminal:
 
