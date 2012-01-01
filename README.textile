@@ -18,7 +18,7 @@ By default, this will build for iPhone using the latest SDK
 
 clean delets the contents of your build folder so your next build will be complete.
 
-_* It's not necessary to execute "make clean" on every time because it will force Titanium to re-compile the entire project again, which can be slow._
+_* NOTE: you might need to set the ANDROID_SDK_PATH var of the makefile, the default is ~/Android._
 
 h2. Options
 

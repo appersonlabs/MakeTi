@@ -1,5 +1,9 @@
 # Makefile to start Titanium Mobile project from the command line.
 
+# This is the ONLY option you should / need to configure
+ANDROID_SDK_PATH='~/Android'
+
+# Please dont change settings below here
 PROJECT_ROOT=$(shell pwd)
 
 iphone=$(iphone)

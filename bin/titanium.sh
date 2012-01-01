@@ -56,7 +56,6 @@ if [ "${android}" == "" ]; then
 fi
 TI_ANDROID_DIR="${TI_ASSETS_DIR}/android"
 TI_ANDROID_BUILD="${TI_ANDROID_DIR}/builder.py"
-ANDROID_SDK_PATH='~/Android'
 
 if [ "DEVICE_TYPE" == "" ]; then
 	echo "[ERROR] Please inform DEVICE_TYPE ('ipad' or 'iphone' or 'android')."
