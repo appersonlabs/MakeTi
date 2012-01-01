@@ -7,6 +7,7 @@ APP_DEVICE=${DEVICE_TYPE}
 TI_SDK_VERSION=`cat tiapp.xml | grep "<sdk-version>" | sed -e "s/<\/*sdk-version>//g"`
 TI_DIR="Library/Application Support/Titanium"
 
+# Look all over for a titanium install
 for d in /Users/*
 do
     if [ -d "$d/${TI_DIR}" ]
@@ -18,25 +19,37 @@ do
     else
         echo "[DEBUG] Titanium not found... Testing another directory"
 
+        # not the most efficient place to have this, but it gets the job done
 		if [ -d "$TI_DIR" ]; then
 			echo "[DEBUG] Titanium found..."
+
+			break
 		fi
     fi
 done
 
-if [ "${TI_SDK_VERSION}" == "" ]; then
-	echo "[ERROR] <sdk-version> is not defined in tiapp.xml"
-	exit 1
-fi
-
+# if no platform is set, use iphone as a default
 if [ "${APP_DEVICE}" == "" ]; then
 	APP_DEVICE="iphone"
+fi
+
+# Make sure an SDK version is set
+if [ "${TI_SDK_VERSION}" == "" ]; then
+	if [ ! "${tisdk}" == "" ]; then
+		TI_SDK_VERSION="${tisdk}"
+	else
+		echo ""
+		echo "[ERROR] <sdk-version> is not defined in tiapp.xml, please define it, or add a tisdk argument to your command."
+		echo ""
+		exit 1
+	fi
 fi
 
 # Both iOS and Android SDKs are linked in this directory
 TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/${TI_SDK_VERSION}"
 
-if [ -d "${TI_DIR}" ]; then
+# Make sure this version exists
+if [ -d "${TI_ASSETS_DIR}" ]; then
 	echo "[DEBUG] Titanium SDK ${TI_SDK_VERSION} found..."
 else
 	echo "[ERROR] Titanium SDK ${TI_SDK_VERSION} not found... "
@@ -58,11 +71,6 @@ TI_ANDROID_DIR="${TI_ASSETS_DIR}/android"
 TI_ANDROID_BUILD="${TI_ANDROID_DIR}/builder.py"
 ANDROID_SDK_PATH='~/Android'
 
-if [ "DEVICE_TYPE" == "" ]; then
-	echo "[ERROR] Please inform DEVICE_TYPE ('ipad' or 'iphone' or 'android')."
-	exit 1
-fi
-
 # Get APP parameters from current tiapp.xml
 APP_ID=`cat tiapp.xml | grep "<id>" | sed -e "s/<\/*id>//g"`
 APP_NAME=`cat tiapp.xml | grep "<name>" | sed -e "s/<\/*name>//g"`
@@ -72,6 +80,7 @@ if [ "APP_ID" == "" ] || [ "APP_NAME" == "" ]; then
 	exit 1
 fi
 
+# build commands based on the platform
 if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
 	echo "${TI_IPHONE_BUILD}"
