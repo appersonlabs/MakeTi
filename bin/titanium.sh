@@ -20,9 +20,6 @@ do
 
 		if [ -d "$TI_DIR" ]; then
 			echo "[DEBUG] Titanium found..."
-		else
-			echo "[ERROR] Titanium not found... Please make sure it is installed correctly..."
-			exit 1
 		fi
     fi
 done
@@ -76,10 +73,12 @@ if [ "APP_ID" == "" ] || [ "APP_NAME" == "" ]; then
 fi
 
 if [ ${APP_DEVICE} == "iphone" ]; then
+
 	echo "${TI_IPHONE_BUILD}"
 	killall "iPhone Simulator"
 	bash -c "'${TI_IPHONE_BUILD}' run ${PROJECT_ROOT}/ ${iphone} ${APP_ID} ${APP_NAME} ${APP_DEVICE}" \
 	| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
 elif [ ${APP_DEVICE} == "android" ]; then
 
 	# Check for Android Virtual Device (AVD)
@@ -92,9 +91,12 @@ elif [ ${APP_DEVICE} == "android" ]; then
 
 	bash -c "'${TI_ANDROID_BUILD}' simulator ${APP_NAME}  ${ANDROID_SDK_PATH} ${PROJECT_ROOT}/ ${APP_ID} ${android}" \
 	| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+elif [ ${APP_DEVICE} == "web" ]; then
+
+	echo "[ERROR] This SDK is not yet supported"
+	exit 1
+
 else
 	echo "[ERROR] not supported!"
 	echo ${APP_DEVICE}
 fi
-
-killall "iPhone Simulator"
