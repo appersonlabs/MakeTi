@@ -25,7 +25,7 @@ do
 done
 
 if [ "${TI_SDK_VERSION}" == "" ]; then
-	echo "[ERROR] sdk-version is not defined in tiapp.xml"
+	echo "[ERROR] <sdk-version> is not defined in tiapp.xml"
 	exit 1
 fi
 
