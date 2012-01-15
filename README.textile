@@ -1,48 +1,33 @@
 h1. MakeTi
 
-MakeTi is a makefile script to make using the titanium CLI tools easy!
-
-It builds your code, it highlights the console output... thats it! It's like a stripped down titanium.py so that it can build your apps faster then Ti Studio or by using titanium run commands
-
-Currently only for mac (expanding that soon).
-
-h2. How to start your project
+h2. How to start the project
 
 Add the files from this repo to the root dir of your project and type one of the following in a terminal:
 
-<pre>$ make run</pre>
+<pre>$ make run-iphone</pre>
 
-By default, this will build for iPhone using the latest SDK
+_* To change the SDK version, change the TI_SDK_VERSION configuration in the bin/titanium.sh script._
 
-<pre>$ make clean</pre>
+To run the application on the iPad, type:
 
-clean delets the contents of your build folder so your next build will be complete.
+<pre>$ make clean && make run-ipad</pre>
 
-_* NOTE: you might need to set the ANDROID_SDK_PATH var of the makefile, the default is ~/Android._
+To run the application on Android, type:
 
-h2. Options
+_* You must have android, applicable sdk versions, and at least one emulator device created and running._
 
-You can change the platform by setting the platform argument like so:
+<pre>$ make clean && make run-android</pre>
 
-<pre>$ make run platform=ipad</pre>
+_* You just have to use "make clean" before the run command if you change the device type. If you're using the same device between executions, it's not necessary to execute "make clean" because it will force Titanium to re-compile the entire project again, which is considerably slow._
 
-You can adjust the iphone sdk using the iphone argument like so:
+h2. To-Do
 
-<pre>$ make run iphone=4.3</pre>
+- Build for device
 
-You can adjust the android sdk using the iphone argument like so:
-
-<pre>$ make run android=10</pre>
-
-_* NOTE: Platforms supported are iphone, ipad, android and web._
+- Dynamic build plugins
 
 h2. License
 
 Licensed under Apache Public License (Version 2).
 
- Developed by "Matt Apperson":http://mattapperson.com.
- Based on the work of "Guilherme Chapiewski":http://guilherme.it.
-
-h2. Disclaimers
-
-This is a private project of mine and currently **not supported** by Appcelerator!  If you have issues, please file them in the GitHub Issues section of the repository and I will try to get to them in a timely fashion.  Better yet, fork and improve!
+Originally Developed by "Guilherme Chapiewski":http://guilherme.it. Extended and edited by "Matt Apperson":http://mattapperson.com.
