@@ -23,6 +23,10 @@ _* You just have to use "make clean" before the run command if you change the de
 h2. To-Do
 
 - Build for device
+  This should work by having 2 directories in the bin dir (dev and release) in this folder the user should place the provisioning profiles
+  The shell script should look to these dir for the mobileprovisioning file to use. 
+  By default it should build for dev, but a type flag should take a dev or release value.
+  there should also be a provision flag that the value can point to any path if the user does not want to add to the project dir for some reason
 
 - Dynamic build plugins
 
