@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # Utility script to start Titanium Mobile project from the command line.
 
 PROJECT_ROOT=${PROJECT_ROOT:-../}
