@@ -22,6 +22,7 @@ do
 
         # not the most efficient place to have this, but it gets the job done
 		if [ -d "/$TI_DIR" ]; then
+			TI_DIR="/${TI_DIR}"
 			echo "[DEBUG] Titanium found..."
 
 			break
@@ -86,7 +87,7 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
 	echo "${TI_IPHONE_BUILD}"
 	killall "iPhone Simulator"
-	bash -c "'${TI_IPHONE_BUILD}' run '${PROJECT_ROOT}/' ${iphone} ${APP_ID} ${APP_NAME} ${APP_DEVICE}" \
+	bash -c "'${TI_IPHONE_BUILD}' run '${PROJECT_ROOT}/' ${iphone} ${APP_ID} '${APP_NAME}' ${APP_DEVICE}" \
 	| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 
 elif [ ${APP_DEVICE} == "android" ]; then
@@ -99,7 +100,7 @@ elif [ ${APP_DEVICE} == "android" ]; then
 	  	exit 1
 	fi
 
-	bash -c "'${TI_ANDROID_BUILD}' simulator ${APP_NAME}  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
+	bash -c "'${TI_ANDROID_BUILD}' simulator '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' '${APP_ID}' '${android}'" \
 	| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 
 elif [ ${APP_DEVICE} == "web" ]; then
