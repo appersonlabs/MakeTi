@@ -10,9 +10,9 @@ iphone=$(iphone)
 
 android=$(android)
 
-DEVICE_TYPE=$(platform)
+BUILD_TYPE=$(build_type)
 
-ANDROID_SDK_PATH = $(android_sdk_path)
+DEVICE_TYPE=$(platform)
 
 help:
 	@echo ""
@@ -37,18 +37,26 @@ run:
 	@if [ "${DEVICE_TYPE}" == "" ]; then\
 		echo "No platform selected... running as iphone.";\
 	fi
-	@make launch-titanium
+
+	@echo "Building with Titanium... as ${BUILD_TYPE}"
+	@mkdir -p '${PROJECT_ROOT}/${PROJECT_NAME}/build/iphone/'
+	@mkdir -p '${PROJECT_ROOT}/${PROJECT_NAME}/build/android/'
+	PROJECT_ROOT='${PROJECT_ROOT}' DEVICE_TYPE=${DEVICE_TYPE} bash '${PROJECT_ROOT}/bin/titanium.sh'
+
+deploy:
+	@if [ "${DEVICE_TYPE}" == "" ]; then\
+		echo "No platform selected... building for iphone.";\
+	fi
+
+	@echo "Building with Titanium... as ${BUILD_TYPE}"
+	@mkdir -p '${PROJECT_ROOT}/${PROJECT_NAME}/build/iphone/'
+	@mkdir -p '${PROJECT_ROOT}/${PROJECT_NAME}/build/android/'
+	PROJECT_ROOT='${PROJECT_ROOT}' DEVICE_TYPE=${DEVICE_TYPE} BUILD_TYPE='device' bash '${PROJECT_ROOT}/bin/titanium.sh'
 
 clean:
-	@rm -rf ${PROJECT_ROOT}/build/iphone/*
-	@mkdir -p ${PROJECT_ROOT}/build/iphone/
+	@rm -rf '${PROJECT_ROOT}/build/iphone/*'
+	@mkdir -p '${PROJECT_ROOT}/build/iphone/'
 	@echo "Deleted: ${PROJECT_ROOT}/build/iphone/*"
-	@rm -rf ${PROJECT_ROOT}/build/android/*
-	@mkdir -p ${PROJECT_ROOT}/build/android/
+	@rm -rf '${PROJECT_ROOT}/build/android/*'
+	@mkdir -p '${PROJECT_ROOT}/build/android/'
 	@echo "Deleted: ${PROJECT_ROOT}/build/android/*"
-
-launch-titanium:
-	@echo "Building with Titanium..."
-	@mkdir -p ${PROJECT_ROOT}/${PROJECT_NAME}/build/iphone/
-	@mkdir -p ${PROJECT_ROOT}/${PROJECT_NAME}/build/android/
-	PROJECT_ROOT='${PROJECT_ROOT}' DEVICE_TYPE=${DEVICE_TYPE} ANDROID_SDK_PATH=${ANDROID_SDK_PATH} bash '${PROJECT_ROOT}/bin/titanium.sh'
