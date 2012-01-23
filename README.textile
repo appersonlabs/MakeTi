@@ -33,13 +33,9 @@ Simply run
 <pre>$ make deploy testflight=true</pre>
 
 Now before you do this, you will need to add 2 lines to your tiapp.xml file
+You can also have the app auto distributed by setting a comma seperated list of distrabution lists
 
-    <tf_api>YOUR TESTFLIGHT API KEY</tf_api>
-    <tf_token>YOUR TESTFLIGHT TEAM TOKEN</tf_token>
-
-
-You can also have the app auto distributed by setting a comma seperated list of distrabution lists like so:
-<pre><tf_dist>Developers, Test Users</tf_dist></pre>
+<img src="https://github.com/mattapperson/blog.mattapperson.com/raw/master/articles/MakeTi-The-make-build-script-for-titanium/Screen%20Shot%202012-01-23%20at%205.22.34%20PM.png" />
 
 I also added an optional notes feature like so:
 <pre>$ make deploy testflight=true notes="This is Beta 3 on my app"</pre>
