@@ -1,4 +1,4 @@
-######How to install
+**How to install**
 
 1. Doubleclick on MakeTi.bundle pack.
 
