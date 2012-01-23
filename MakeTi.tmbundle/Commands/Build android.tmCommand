@@ -49,7 +49,7 @@ end
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
-	<string>@m</string>
+	<string>@b</string>
 	<key>name</key>
 	<string>Build android</string>
 	<key>output</key>
