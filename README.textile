@@ -20,6 +20,15 @@ _* You must have android, applicable sdk versions, and at least one emulator dev
 
 _* You just have to use "make clean" before the run command if you change the device type. If you're using the same device between executions, it's not necessary to execute "make clean" because it will force Titanium to re-compile the entire project again, which is considerably slow._
 
+
+h2. How to install the Textmate bundle
+
+1. Doubleclick on the MakeTi.bundle pack to install the bundle in textmate
+
+2. You will need to set in Textmate the **ENV["ANDROID_SDK_PATH"]** variable.
+To do this go to Preferences->Advanced->Shell variables, add a new variable named **ANDROID_SDK_PATH** and set the path to the location of your Android SDK. (in my case is /android-sdk-mac_x86).
+
+
 h2. To-Do
 
 - Build for device
