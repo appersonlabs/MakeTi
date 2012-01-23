@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>autoScrollOutput</key>
+	<true/>
+	<key>beforeRunningCommand</key>
+	<string>saveModifiedFiles</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+
+require ENV["TM_SUPPORT_PATH"] + "/lib/tm/executor"
+require ENV["TM_SUPPORT_PATH"] + "/lib/tm/save_current_document"
+require ENV["TM_SUPPORT_PATH"] + "/lib/escape"
+
+TM_MAKE = e_sh(ENV['TM_MAKE'] || 'make')
+
+TextMate::Executor.make_project_master_current_document
+
+ENV["TM_PROJECT_DIRECTORY"] ||= File.dirname(ENV["TM_FILEPATH"])
+Dir.chdir(ENV["TM_PROJECT_DIRECTORY"])
+ENV["TM_MAKE_FILE"] = ENV["TM_PROJECT_DIRECTORY"] + "/Makefile" if ENV["TM_MAKE_FILE"].nil? or not File.file?(ENV["TM_MAKE_FILE"])
+
+flags = ["-w"]
+flags &lt;&lt; "-f" + File.basename(ENV["TM_MAKE_FILE"])
+flags &lt;&lt; ENV["TM_MAKE_FLAGS"] unless ENV["TM_MAKE_FLAGS"].nil?
+flags &lt;&lt; ENV["TM_MAKE_TARGET"] unless ENV["TM_MAKE_TARGET"].nil?
+
+ENV["TM_DISPLAYNAME"] = ENV["TM_MAKE_TARGET"] || "default"
+
+Dir.chdir(File.dirname(ENV["TM_MAKE_FILE"]))
+
+dirs = [ENV['TM_PROJECT_DIRECTORY']]
+TextMate::Executor.run(TM_MAKE, "clean", :verb =&gt; "Making") do |line, type|
+  if line =~ /^g?make.*?: Entering directory `(.*?)'$/ and not $1.nil? and File.directory?($1)
+    dirs.unshift($1)
+    ""
+  elsif line =~ /^g?make.*?: Leaving directory `(.*?)'$/ and not $1.nil? and File.directory?($1)
+    dirs.delete($1)
+    ""
+  elsif line =~ /^(.*?):(?:(\d+):)?\s*(.*?)$/ and not $1.nil?
+    expanded_path = dirs.map{ |dir| File.expand_path($1, dir) }.find{ |path| File.file?path }
+    if !expanded_path.nil?
+      "&lt;a href=\"txmt://open?url=file://#{e_url expanded_path}#{$2.nil? ? '' : "&amp;line=" + $2}\"&gt;#{htmlize $3}&lt;/a&gt;&lt;br&gt;\n"
+    end
+  end
+end
+</string>
+	<key>input</key>
+	<string>document</string>
+	<key>keyEquivalent</key>
+	<string>@m</string>
+	<key>name</key>
+	<string>Clean</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>uuid</key>
+	<string>D91C920E-F4F9-4A25-AB7A-D21F72B87BBD</string>
+</dict>
+</plist>
