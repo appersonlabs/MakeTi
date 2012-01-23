@@ -33,10 +33,10 @@ Simply run
 <pre>$ make deploy testflight=true</pre>
 
 Now before you do this, you will need to add 2 lines to your tiapp.xml file
-<pre>
-  <tf_api>YOUR TESTFLIGHT API KEY</tf_api>
-  <tf_token>YOUR TESTFLIGHT TEAM TOKEN</tf_token>
-</pre>
+
+    <tf_api>YOUR TESTFLIGHT API KEY</tf_api>
+    <tf_token>YOUR TESTFLIGHT TEAM TOKEN</tf_token>
+
 
 You can also have the app auto distributed by setting a comma seperated list of distrabution lists like so:
 <pre><tf_dist>Developers, Test Users</tf_dist></pre>
