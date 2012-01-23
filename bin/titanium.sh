@@ -5,6 +5,8 @@
 
 PROJECT_ROOT=${PROJECT_ROOT:-../}
 APP_DEVICE=${DEVICE_TYPE}
+ANDROID_SDK_PATH = ${ANDROID_SDK_PATH}
+
 TI_SDK_VERSION=`cat tiapp.xml | grep "<sdk-version>" | sed -e "s/<\/*sdk-version>//g"`
 TI_DIR="Library/Application Support/Titanium/mobilesdk"
 
@@ -71,7 +73,7 @@ if [ "${android}" == "" ]; then
 fi
 TI_ANDROID_DIR="${TI_ASSETS_DIR}/android"
 TI_ANDROID_BUILD="${TI_ANDROID_DIR}/builder.py"
-ANDROID_SDK_PATH='~/Android'
+# ANDROID_SDK_PATH='~/Android'
 
 # Get APP parameters from current tiapp.xml
 APP_ID=`cat tiapp.xml | grep "<id>" | sed -e "s/<\/*id>//g"`
