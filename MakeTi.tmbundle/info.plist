@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>MakeTi</string>
+	<key>ordering</key>
+	<array>
+		<string>D91C920E-F4F9-4A25-AB7A-D21F72B87BBD</string>
+		<string>5AE69A0C-D25E-46F8-8A05-E855E851932E</string>
+		<string>1D66132E-284E-462D-85F6-9949403E957D</string>
+		<string>4AF6BFF7-BD8C-416E-8B8F-4CBCA6E2C227</string>
+		<string>EB382ACC-45F8-4880-943A-9AAFBB3A954A</string>
+	</array>
+	<key>uuid</key>
+	<string>F9BCEB4C-71D9-42C4-958E-D3CF2235B2AF</string>
+</dict>
+</plist>
