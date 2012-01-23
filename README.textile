@@ -56,11 +56,11 @@ To do this go to _Preferences->Advanced->Shell variables_ add a new variable nam
 
 h2. To-Do
 
-- Build for device
-  This should work by having 2 directories in the bin dir (dev and release) in this folder the user should place the provisioning profiles
-  The shell script should look to these dir for the mobileprovisioning file to use. 
-  By default it should build for dev, but a type flag should take a dev or release value.
-  there should also be a provision flag that the value can point to any path if the user does not want to add to the project dir for some reason
+- Deploy to AppStore / Marketplace
+
+- Build for device (Android)
+
+- Don't ask if I want to replace the existing version of the app in iTunes (iOS only)
 
 - Dynamic build plugins
 
