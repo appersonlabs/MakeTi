@@ -6,7 +6,7 @@ Add the files from this repo to the root dir of your project and type one of the
 
 <pre>$ make run-iphone</pre>
 
-_* To change the SDK version, change the TI_SDK_VERSION configuration in the bin/titanium.sh script._
+_* To change the SDK version, change the SDK version in your tiapp.xml._
 
 To run the application on the iPad, type:
 
@@ -20,6 +20,33 @@ _* You must have android, applicable sdk versions, and at least one emulator dev
 
 _* You just have to use "make clean" before the run command if you change the device type. If you're using the same device between executions, it's not necessary to execute "make clean" because it will force Titanium to re-compile the entire project again, which is considerably slow._
 
+h2. How to run on your device
+
+To run your app on an iOS device you must simply add your development cert to <project dir>/certs/development.mobileprovision Creating the crets dir if needed.
+
+After that, simply run
+<pre>$ make deploy</pre>
+
+h2. Build and deploy directly to TestFlight
+
+Simply run
+<pre>$ make deploy testflight=true</pre>
+
+Now before you do this, you will need to add 2 lines to your tiapp.xml file
+<pre>
+<tf_api>YOUR TESTFLIGHT API KEY</tf_api>
+<tf_token>YOUR TESTFLIGHT TEAM TOKEN</tf_token>
+</pre>
+
+You can also have the app auto distributed by setting a comma seperated list of distrabution lists like so:
+<pre><tf_dist>Developers, Test Users</tf_dist></pre>
+
+I also added an optional notes feature like so:
+<pre>$ make deploy testflight=true notes="This is Beta 3 on my app"</pre>
+
+That note will then be deliverd in the email to your beta testers informing them of the new app being ready to download.
+
+_* Due to restrictions in the TestFlight API... if you dont set tf_dist in your Tiapp.xml... users wont get an email letting them know they can download till you go onto the testflight site and check them as users of the latest beta._
 
 h2. How to install the Textmate bundle
 
