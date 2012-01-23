@@ -12,6 +12,8 @@ android=$(android)
 
 DEVICE_TYPE=$(platform)
 
+ANDROID_SDK_PATH = $(android_sdk_path)
+
 help:
 	@echo ""
 	@echo "**************************************************************"
@@ -49,4 +51,4 @@ launch-titanium:
 	@echo "Building with Titanium..."
 	@mkdir -p ${PROJECT_ROOT}/${PROJECT_NAME}/build/iphone/
 	@mkdir -p ${PROJECT_ROOT}/${PROJECT_NAME}/build/android/
-	PROJECT_ROOT='${PROJECT_ROOT}' DEVICE_TYPE=${DEVICE_TYPE} bash '${PROJECT_ROOT}/bin/titanium.sh'
+	PROJECT_ROOT='${PROJECT_ROOT}' DEVICE_TYPE=${DEVICE_TYPE} ANDROID_SDK_PATH=${ANDROID_SDK_PATH} bash '${PROJECT_ROOT}/bin/titanium.sh'
