@@ -127,6 +127,7 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
 			DATE=$( /bin/date +"%Y-%m-%d" )
 
+			echo "'${TI_IPHONE_DIR}/provisioner.py' '${PROVISIONING_PROFILE}'"
 			echo "Loading provisioning profile..."
 			bash -c "'${TI_IPHONE_DIR}/provisioner.py' '${PROVISIONING_PROFILE}'" | \
 			while read line
