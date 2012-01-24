@@ -54,9 +54,9 @@ deploy:
 	PROJECT_ROOT='${PROJECT_ROOT}' DEVICE_TYPE=${DEVICE_TYPE} BUILD_TYPE='device' bash '${PROJECT_ROOT}/bin/titanium.sh'
 
 clean:
-	@rm -rf '${PROJECT_ROOT}/build/iphone/*'
+	@rm -rf '${PROJECT_ROOT}/build/iphone/'
 	@mkdir -p '${PROJECT_ROOT}/build/iphone/'
 	@echo "Deleted: ${PROJECT_ROOT}/build/iphone/*"
-	@rm -rf '${PROJECT_ROOT}/build/android/*'
+	@rm -rf '${PROJECT_ROOT}/build/android/'
 	@mkdir -p '${PROJECT_ROOT}/build/android/'
 	@echo "Deleted: ${PROJECT_ROOT}/build/android/*"
