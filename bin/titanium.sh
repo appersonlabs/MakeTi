@@ -23,7 +23,8 @@ do
         echo "[DEBUG] Titanium not found... Testing another directory"
 
         # not the most efficient place to have this, but it gets the job done
-		if [ -d "$TI_DIR" ]; then
+		if [ -d "/$TI_DIR" ]; then
+            TI_DIR="/${TI_DIR}"
 			echo "[DEBUG] Titanium found..."
 
 			break
