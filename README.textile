@@ -62,12 +62,13 @@ B. Cmd+B within a file should open an option dialog letting you choose what to b
 
 h2. How to install the SublimeText2 package
 
-1. Copy the MakeTi.sublime-package file to _~/Library/Application\ Support/Sublime\ Text\ 2/Installed\ Packages/_.
-2. Edit the _~/Library/Application\ Support/Sublime\ Text\ 2/Packages/MakeTi/MakeTi.sublime-settings_ file to the correct path for the Android SDK.
-3. Restart SublimeText2.
-4. Open the whole project in SublimeText2.
-5. Go to menu _Tools->Build System_ and select **MakeTi**.
-6. Cmd+B within a file should open an option dialog letting you choose what to build for.
+1. Copy the MakeTi.sublime-package file to _~/Library/Application\ Support/Sublime\ Text\ 2/Installed\ Packages/
+2. Restart SublimeText2.
+3. Edit the _~/Library/Application\ Support/Sublime\ Text\ 2/Packages/MakeTi/MakeTi.sublime-settings_ file to the correct path for the Android SDK.
+4. Restart SublimeText2.
+5. Open the whole project in SublimeText2.
+6. Go to menu _Tools->Build System_ and select **MakeTi**.
+7. Cmd+B within a file should open an option dialog letting you choose what to build for.
 
 **Simulator only for now**
 
