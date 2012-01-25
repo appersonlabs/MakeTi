@@ -4,22 +4,51 @@ h2. How to start the project
 
 Add the files from this repo to the root dir of your project and type one of the following in a terminal:
 
-<pre>$ make run-iphone</pre>
+<pre>$ make run</pre>
 
-_* To change the SDK version, change the TI_SDK_VERSION configuration in the bin/titanium.sh script._
+_* To change the SDK version, change the SDK version in your tiapp.xml._
 
-To run the application on the iPad, type:
-
-<pre>$ make clean && make run-ipad</pre>
+<pre>$ make clean && make run</pre>
 
 To run the application on Android, type:
 
-_* You must have android, applicable sdk versions, and at least one emulator device created and running._
+<pre>$ make clean && make run</pre>
 
-<pre>$ make clean && make run-android</pre>
+to change platform, simply run:
+
+<pre>$ make run platform=andorid</pre>
+
+OR
+
+<pre>$ make run platform=ipad</pre>
+
+The default platform is iPhone
 
 _* You just have to use "make clean" before the run command if you change the device type. If you're using the same device between executions, it's not necessary to execute "make clean" because it will force Titanium to re-compile the entire project again, which is considerably slow._
 
+h2. How to run on your device
+
+To run your app on an iOS device you must simply add your development cert to <project dir>/certs/development.mobileprovision Creating the crets dir if needed.
+
+After that, simply run
+<pre>$ make deploy</pre>
+
+h2. Build and deploy directly to TestFlight
+
+Simply run
+<pre>$ make deploy testflight=true</pre>
+
+Now before you do this, you will need to add 2 lines to your tiapp.xml file
+You can also have the app auto distributed by setting a comma seperated list of distrabution lists
+
+<img src="https://github.com/mattapperson/blog.mattapperson.com/raw/master/articles/MakeTi-The-make-build-script-for-titanium/Screen%20Shot%202012-01-23%20at%205.22.34%20PM.png" />
+
+I also added an optional notes feature like so:
+<pre>$ make deploy testflight=true notes="This is Beta 3 on my app"</pre>
+
+That note will then be deliverd in the email to your beta testers informing them of the new app being ready to download.
+
+_* Due to restrictions in the TestFlight API... if you dont set tf_dist in your Tiapp.xml... users wont get an email letting them know they can download till you go onto the testflight site and check them as users of the latest beta._
 
 h2. How to install the Textmate bundle
 
@@ -29,11 +58,11 @@ To do this go to _Preferences->Advanced->Shell variables_ add a new variable nam
 
 h2. To-Do
 
-- Build for device
-  This should work by having 2 directories in the bin dir (dev and release) in this folder the user should place the provisioning profiles
-  The shell script should look to these dir for the mobileprovisioning file to use. 
-  By default it should build for dev, but a type flag should take a dev or release value.
-  there should also be a provision flag that the value can point to any path if the user does not want to add to the project dir for some reason
+- Deploy to AppStore / Marketplace
+
+- Build for device (Android)
+
+- Don't ask if I want to replace the existing version of the app in iTunes (iOS only)
 
 - Dynamic build plugins
 
