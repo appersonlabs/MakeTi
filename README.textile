@@ -52,9 +52,24 @@ _* Due to restrictions in the TestFlight API... if you dont set tf_dist in your 
 
 h2. How to install the Textmate bundle
 
-1. Doubleclick on the **MakeTi.bundle** pack to install the bundle in Textmate
-
+1. Double-click on the **MakeTi.bundle** pack to install the bundle in Textmate.
+2. Edit the ANDROID_SDK_PATH variablie in Textmate to the correct path of the Android SDK.
 To do this go to _Preferences->Advanced->Shell variables_ add a new variable named **ANDROID_SDK_PATH** and set the path to the location of your Android SDK. (in my case is /android-sdk-mac_x86).
+3. Open the whole project in Textmate.
+B. Cmd+B within a file should open an option dialog letting you choose what to build for.
+
+**Simulator only for now**
+
+h2. How to install the SublimeText2 package
+
+1. Copy the MakeTi.sublime-package file to _~/Library/Application\ Support/Sublime\ Text\ 2/Installed\ Packages/_.
+2. Edit the _~/Library/Application\ Support/Sublime\ Text\ 2/Packages/MakeTi/MakeTi.sublime-settings_ file to the correct path for the Android SDK.
+3. Restart SublimeText2.
+4. Open the whole project in SublimeText2.
+5. Go to menu _Tools->Build System_ and select **MakeTi**.
+6. Cmd+B within a file should open an option dialog letting you choose what to build for.
+
+**Simulator only for now**
 
 h2. To-Do
 
@@ -65,6 +80,8 @@ h2. To-Do
 - Don't ask if I want to replace the existing version of the app in iTunes (iOS only)
 
 - Dynamic build plugins
+
+- Update the Textmate and SublimeText2 plugins for the new build options MakeTi offers (deploy to device and to testflight).
 
 h2. License
 
