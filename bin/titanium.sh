@@ -125,6 +125,11 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 			SIGNING_IDENTITY=${IPHONE_DEV_NAMES[$IPHONE_DEV_CERT]}
 			PROVISIONING_PROFILE="${PROJECT_ROOT}/certs/development.mobileprovision"
 
+            if [ ! -r 'certs/development.mobileprovision' ];then
+				echo "You must have a file called ${PROVISIONING_PROFILE} to beild for device..."
+				exit
+            fi
+
 			DATE=$( /bin/date +"%Y-%m-%d" )
 
 			echo "'${TI_IPHONE_DIR}/provisioner.py' '${PROVISIONING_PROFILE}'"
