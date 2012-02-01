@@ -13,7 +13,7 @@ IPHONE_DEV_CERT=${cert}
 # Look all over for a titanium install
 for d in /Users/*
 do
-    if [ -d "$d/${TI_DIR}/mobilesdk" ]
+    if [ -d "$d/${TI_DIR}" ]
     then
         TI_DIR="$d/${TI_DIR}"
         echo "[DEBUG] Titanium exists..."
@@ -23,12 +23,12 @@ do
         echo "[DEBUG] Titanium not found... Testing another directory"
 
         # not the most efficient place to have this, but it gets the job done
-	if [ -d "/$TI_DIR/mobilesdk" ]; then
+		if [ -d "/$TI_DIR" ]; then
             TI_DIR="/${TI_DIR}"
-		echo "[DEBUG] Titanium found..."
+			echo "[DEBUG] Titanium found..."
 
-		break
-	fi
+			break
+		fi
     fi
 done
 
@@ -101,7 +101,7 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 		bash -c "'${TI_IPHONE_DIR}/prereq.py' package" | \
 		while read prov
 		do
-			temp_iphone_dev_names=`echo $prov | awk -v k="text" '{n=split($0,a,"]"); for (i=1; i<=n; i++) print a[i];}' | sed 's/\"//g' | sed 's/\[//g' | grep -w 'iphone_dev_name'`
+			temp_iphone_dev_names=`echo $prov | python -c 'import json,sys;obj=json.loads(sys.stdin.read());print obj["'"iphone_dev_name"'"]'| sed 's/\[//g'| sed 's/\]//g'| sed 's/\u//g'| sed "s/\ '//g"| sed "s/\'//g"`
 			IFS=,
 			IPHONE_DEV_NAMES=(${temp_iphone_dev_names//,iphone_dev_name:/})
 
