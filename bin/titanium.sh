@@ -13,7 +13,7 @@ IPHONE_DEV_CERT=${cert}
 # Look all over for a titanium install
 for d in /Users/*
 do
-    if [ -d "$d/${TI_DIR}/mobilesdk" ]
+    if [ -d "$d/${TI_DIR}" ]
     then
         TI_DIR="$d/${TI_DIR}"
         echo "[DEBUG] Titanium exists..."
@@ -23,12 +23,12 @@ do
         echo "[DEBUG] Titanium not found... Testing another directory"
 
         # not the most efficient place to have this, but it gets the job done
-	if [ -d "/$TI_DIR/mobilesdk" ]; then
+		if [ -d "/$TI_DIR" ]; then
             TI_DIR="/${TI_DIR}"
-		echo "[DEBUG] Titanium found..."
+			echo "[DEBUG] Titanium found..."
 
-		break
-	fi
+			break
+		fi
     fi
 done
 
@@ -90,7 +90,9 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
 	# Run the app in the simulator
 	if [ "${BUILD_TYPE}" == "" ]; then
-		killall "iPhone Simulator"
+		if [ "$(ps -Ac | egrep -i 'iPhone Simulator' | awk '{print $1}')" ]; then
+			killall "iPhone Simulator"
+		fi
 		echo "'${TI_IPHONE_BUILD}' run '${PROJECT_ROOT}/' ${iphone} ${APP_ID} '${APP_NAME}' ${APP_DEVICE}"
 		bash -c "'${TI_IPHONE_BUILD}' run '${PROJECT_ROOT}/' ${iphone} ${APP_ID} '${APP_NAME}' ${APP_DEVICE}" \
 		| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
@@ -101,7 +103,7 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 		bash -c "'${TI_IPHONE_DIR}/prereq.py' package" | \
 		while read prov
 		do
-			temp_iphone_dev_names=`echo $prov | awk -v k="text" '{n=split($0,a,"]"); for (i=1; i<=n; i++) print a[i];}' | sed 's/\"//g' | sed 's/\[//g' | grep -w 'iphone_dev_name'`
+			temp_iphone_dev_names=`echo $prov | python -c 'import json,sys;obj=json.loads(sys.stdin.read());print obj["'"iphone_dev_name"'"]'| sed 's/\[//g'| sed 's/\]//g'| sed 's/\u//g'| sed "s/\ '//g"| sed "s/\'//g"`
 			IFS=,
 			IPHONE_DEV_NAMES=(${temp_iphone_dev_names//,iphone_dev_name:/})
 
@@ -214,16 +216,44 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
 elif [ ${APP_DEVICE} == "android" ]; then
 
-	# Check for Android Virtual Device (AVD)
-	if [ ! "$(ps -Ac | egrep -i 'emulator-arm' | awk '{print $1}')" ]
-	  then
-	  	echo "[ERROR] Could not find a running emulator."
-	  	echo "[ERROR] Run this command in a separate terminal session: ${ANDROID_SDK_PATH}/tools/emulator-arm -avd ${android}"
-	  	exit 1
+	# Run the app in the simulator
+	if [ "${BUILD_TYPE}" == "" ]; then
+		# Check for Android Virtual Device (AVD)
+		if [ "$(ps -Ac | egrep -i 'emulator-arm' | awk '{print $1}')" ]; then
+			bash -c "'${TI_ANDROID_BUILD}' simulator '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
+			| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+		else
+			echo "[ERROR] Could not find a running emulator."
+		  	echo "[ERROR] Run this command in a separate terminal session: ${ANDROID_SDK_PATH}/tools/emulator-arm -avd ${android}"
+		  	exit 0
+		fi
+	else
+		list_called="false"
+		device_found="false"
+		bash -c "${ANDROID_SDK_PATH}/platform-tools/adb devices" | \
+		while read adb_output
+		do
+			if [ "${adb_output}" == "" ]; then
+				if [ "${device_found}" == "false" ]; then
+					echo "[ERROR] Could not find an attached android device with development mode enabled."
+					exit 0
+				fi
+			fi
+
+			if [ "${list_called}" == "True" ]; then
+				device_found="True"
+
+				bash -c "'${TI_ANDROID_BUILD}' install '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
+				| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+				break
+			fi
+
+			if [ "${adb_output}" == "List of devices attached" ]; then
+				list_called="True"
+			fi
+		done
 	fi
 
-	bash -c "'${TI_ANDROID_BUILD}' simulator '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
-	| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 
 elif [ ${APP_DEVICE} == "web" ]; then
 
