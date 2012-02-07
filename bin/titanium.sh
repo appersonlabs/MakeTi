@@ -13,7 +13,7 @@ IPHONE_DEV_CERT=${cert}
 # Look all over for a titanium install
 for d in /Users/*
 do
-    if [ -d "$d/${TI_DIR}" ]
+    if [ -d "$d/${TI_DIR}/mobilesdk" ]
     then
         TI_DIR="$d/${TI_DIR}"
         echo "[DEBUG] Titanium exists..."
@@ -23,7 +23,7 @@ do
         echo "[DEBUG] Titanium not found... Testing another directory"
 
         # not the most efficient place to have this, but it gets the job done
-		if [ -d "/$TI_DIR" ]; then
+		if [ -d "/$TI_DIR/mobilesdk" ]; then
             TI_DIR="/${TI_DIR}"
 			echo "[DEBUG] Titanium found..."
 
