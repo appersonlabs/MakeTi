@@ -220,7 +220,7 @@ elif [ ${APP_DEVICE} == "android" ]; then
 	if [ "${BUILD_TYPE}" == "" ]; then
 		# Check for Android Virtual Device (AVD)
 		if [ "$(ps -Ac | egrep -i 'emulator-arm' | awk '{print $1}')" ]; then
-			bash -c "'${TI_ANDROID_BUILD}' simulator '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
+			bash -c "'${TI_ANDROID_BUILD}' simulator '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android} && adb logcat | grep Ti" \
 			| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 		else
 			echo "[ERROR] Could not find a running emulator."
