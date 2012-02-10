@@ -14,6 +14,9 @@ BUILD_TYPE=$(build_type)
 
 DEVICE_TYPE=$(platform)
 
+MAKETI_DIR=$(dir $(lastword $(MAKEFILE_LIST)))
+
+
 help:
 	@echo ""
 	@echo "**************************************************************"
@@ -41,7 +44,7 @@ run:
 	@echo "Building with Titanium... as ${BUILD_TYPE}"
 	@mkdir -p '${PROJECT_ROOT}/${PROJECT_NAME}/build/iphone/'
 	@mkdir -p '${PROJECT_ROOT}/${PROJECT_NAME}/build/android/'
-	PROJECT_ROOT='${PROJECT_ROOT}' DEVICE_TYPE=${DEVICE_TYPE} bash '${PROJECT_ROOT}/bin/titanium.sh'
+	PROJECT_ROOT='${PROJECT_ROOT}' DEVICE_TYPE=${DEVICE_TYPE} bash '${MAKETI_DIR}/bin/titanium.sh'
 
 deploy:
 	@if [ "${DEVICE_TYPE}" == "" ]; then\
