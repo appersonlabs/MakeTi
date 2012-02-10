@@ -199,7 +199,18 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 							do
 								DATE=$( /bin/date +"%Y-%m-%d" )
 							done
+                        else
+                            APP="${PROJECT_ROOT}/build/iphone/build/Debug-iphoneos/$(echo $APP_NAME).app"
 
+                            /bin/rm "/tmp/$(echo $APP_NAME).ipa"
+                            /usr/bin/xcrun -sdk iphoneos PackageApplication -v "${APP}" -o "/tmp/$(echo $APP_NAME).ipa" --sign "${SIGNING_IDENTITY}" --embed "${PROVISIONING_PROFILE}" | \
+                            while read package_log
+                            do
+                                DATE=$( /bin/date +"%Y-%m-%d" )
+                            done
+
+                            bash -c "'bin/MakeTinstall' '/tmp/$(echo $APP_NAME).ipa'"\
+                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 						fi
 
 					else
@@ -220,7 +231,7 @@ elif [ ${APP_DEVICE} == "android" ]; then
 	if [ "${BUILD_TYPE}" == "" ]; then
 		# Check for Android Virtual Device (AVD)
 		if [ "$(ps -Ac | egrep -i 'emulator-arm' | awk '{print $1}')" ]; then
-			bash -c "'${TI_ANDROID_BUILD}' simulator '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android} && adb logcat | grep Ti" \
+			bash -c "'${TI_ANDROID_BUILD}' simulator '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
 			| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 		else
 			echo "[ERROR] Could not find a running emulator."
