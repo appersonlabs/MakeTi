@@ -16,7 +16,7 @@ To run the application on Android, type:
 
 to change platform, simply run:
 
-<pre>$ make run platform=andorid</pre>
+<pre>$ make run platform=android</pre>
 
 OR
 
@@ -24,7 +24,7 @@ OR
 
 The default platform is iPhone
 
-_* You just have to use "make clean" before the run command if you change the device type. If you're using the same device between executions, it's not necessary to execute "make clean" because it will force Titanium to re-compile the entire project again, which is considerably slow._
+_* You just have to use "make clean" before the run command if you change the device type. If you're using the same device between executions, it's not necessary to execute "make clean" because it will force Titanium to re-compile the entire project again, which is considerably slower._
 
 h2. How to run on your device
 
@@ -39,7 +39,7 @@ Simply run
 <pre>$ make deploy testflight=true</pre>
 
 Now before you do this, you will need to add 2 lines to your tiapp.xml file
-You can also have the app auto distributed by setting a comma seperated list of distrabution lists
+You can also have the app auto distributed by setting a comma separated list of distribution lists
 
 <img src="https://github.com/mattapperson/blog.mattapperson.com/raw/master/articles/MakeTi-The-make-build-script-for-titanium/Screen%20Shot%202012-01-23%20at%205.22.34%20PM.png" />
 
@@ -48,7 +48,7 @@ I also added an optional notes feature like so:
 
 That note will then be deliverd in the email to your beta testers informing them of the new app being ready to download.
 
-_* Due to restrictions in the TestFlight API... if you dont set tf_dist in your Tiapp.xml... users wont get an email letting them know they can download till you go onto the testflight site and check them as users of the latest beta._
+_* Due to restrictions in the TestFlight API... if you don't set tf_dist in your Tiapp.xml... users wont get an email letting them know they can download till you go onto the testflight site and check them as users of the latest beta._
 
 h2. How to install the Textmate bundle
 
