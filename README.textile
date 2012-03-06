@@ -8,19 +8,15 @@ Add the files from this repo to the root dir of your project and type one of the
 
 _* To change the SDK version, change the SDK version in your tiapp.xml._
 
-<pre>$ make clean && make run</pre>
+<pre>$ make run</pre>
 
 To run the application on Android, type:
 
-<pre>$ make clean && make run</pre>
+<pre>$ make clean && make run platform=andorid</pre>
 
-to change platform, simply run:
+To run the application on iPad, type:
 
-<pre>$ make run platform=andorid</pre>
-
-OR
-
-<pre>$ make run platform=ipad</pre>
+<pre>$ make clean && make run platform=ipad</pre>
 
 The default platform is iPhone
 
@@ -32,6 +28,16 @@ To run your app on an iOS device you must simply add your development cert to <p
 
 After that, simply run
 <pre>$ make deploy</pre>
+
+To deploy the application on Android, type:
+
+<pre>$ make clean && make deploy platform=andorid</pre>
+
+To deploy the application on iPad, type:
+
+<pre>$ make clean && make deploy platform=ipad</pre>
+
+_* When you do a deploy on any iOS platform, it MakeTi will present to you a list of avaliable certs on your system, next to each cert is an id. you must re-run your deploy command using the cert you wish to use by adding cert=<id> to your command._
 
 h2. Build and deploy directly to TestFlight
 
@@ -80,7 +86,7 @@ h2. To-Do
 
 - Don't ask if I want to replace the existing version of the app in iTunes (iOS only)
 
-- Dynamic build plugins
+- Add HockeyKit support
 
 - Update the Textmate and SublimeText2 plugins for the new build options MakeTi offers (deploy to device and to testflight).
 
