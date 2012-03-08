@@ -41,7 +41,7 @@ Android users also have an extra option of apkonly=true, so if you run:
 
 <pre>make clean && make deploy platform=andorid apkonly=true</pre>
 
-you will have an UNSIGNED (for dev use only, not for the market) located in:
+you will have an UNSIGNED (for dev use only, not for the market) apk located in:
 
 (your project dir)/build/android/bin/app.apk
 
