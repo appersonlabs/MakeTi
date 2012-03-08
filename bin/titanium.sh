@@ -7,7 +7,9 @@ TI_SDK_VERSION=`cat tiapp.xml | grep "<sdk-version>" | sed -e "s/<\/*sdk-version
 TI_DIR="Library/Application Support/Titanium"
 BUILD_TYPE=${BUILD_TYPE}
 TESTFLIGHT_ENABLED=${testflight}
-TESTFLIGHT_NOTES=${notes}
+HOCKEY_ENABLED=${hockey}
+APK_ONLY=${justapk}
+RELEASE_NOTES=${notes}
 IPHONE_DEV_CERT=${cert}
 
 # Look all over for a titanium install
@@ -103,7 +105,7 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 		bash -c "'${TI_IPHONE_DIR}/prereq.py' package" | \
 		while read prov
 		do
-			temp_iphone_dev_names=`echo $prov | python -c 'import json,sys;obj=json.loads(sys.stdin.read());print obj["'"iphone_dev_name"'"]'| sed 's/\[//g'| sed 's/\]//g'| sed 's/\u//g'| sed "s/\ '//g"| sed "s/\'//g"`
+			temp_iphone_dev_names=`echo $prov | python -c 'import json,sys;obj=json.loads(sys.stdin.read());print obj["'"iphone_dev_name"'"]'| sed 's/ u//g' | sed 's/\[u//g' | sed 's/\[//g'| sed 's/\]//g'| sed "s/\ '//g"| sed "s/\'//g"`
 			IFS=,
 			IPHONE_DEV_NAMES=(${temp_iphone_dev_names//,iphone_dev_name:/})
 
@@ -183,8 +185,8 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 							echo "[INFO] Uploading .ipa to TestFlight..." \
 							| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 
-							if [ "${TESTFLIGHT_NOTES}" == '' ]; then
-								TESTFLIGHT_NOTES='Build uploaded automatically from MakeTi.'
+							if [ "${RELEASE_NOTES}" == '' ]; then
+								RELEASE_NOTES='Build uploaded automatically from MakeTi.'
 							fi
 
 							/usr/bin/curl "http://testflightapp.com/api/builds.json" \
@@ -194,13 +196,63 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 							  -F replace="True" \
 							  -F team_token=${TEAM_TOKEN} \
 							  -F distribution_lists=`cat tiapp.xml | grep "<tf_dist>" | sed -e "s/<\/*tf_dist>//g"` \
-							  -F notes="${TESTFLIGHT_NOTES}" | \
+							  -F notes="${RELEASE_NOTES}" | \
 							while read upload_log
 							do
 								DATE=$( /bin/date +"%Y-%m-%d" )
 							done
 
 						fi
+
+                        if [ $HOCKEY_ENABLED ]; then
+
+                            API_TOKEN=`cat tiapp.xml | grep "<hockey_api>" | sed -e "s/<\/*hockey_api>//g"`
+                            API_TOKEN=$(echo ${API_TOKEN//    /})
+                            APP_ID=`cat tiapp.xml | grep "<hockey_id>" | sed -e "s/<\/*hockey_id>//g"`
+                            APP_ID=$(echo ${APP_ID//    /})
+
+                            if [ "${API_TOKEN}" == '' -o "${APP_ID}" == '' ]; then
+                                echo "[ERROR] HockeyApp API key (hockey_api) and HockeyApp app ID (hockey_id) must be defined in your tiapp.xml to upload with HockeyApp"\
+                                | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
+                                exit 0
+                            fi
+
+                            echo "[INFO] Preping to upload to HockeyApp..."\
+                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
+                            APP="${PROJECT_ROOT}/build/iphone/build/Debug-iphoneos/$(echo $APP_NAME).app"
+
+                            echo "[INFO] Creating .ipa from compiled app"\
+                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
+                            /bin/rm "/tmp/$(echo $APP_NAME).ipa"
+                            /usr/bin/xcrun -sdk iphoneos PackageApplication -v "${APP}" -o "/tmp/$(echo $APP_NAME).ipa" --sign "${SIGNING_IDENTITY}" --embed "${PROVISIONING_PROFILE}" | \
+                            while read package_log
+                            do
+                                DATE=$( /bin/date +"%Y-%m-%d" )
+                            done
+                            echo "[INFO] Uploading .ipa to HockeyApp..." \
+                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
+                            if [ "${RELEASE_NOTES}" == '' ]; then
+                                RELEASE_NOTES='Build uploaded automatically from MakeTi.'
+                            fi
+
+                            /usr/bin/curl \
+                            -F "status=2" \
+                            -F "notify=1" \
+                            -F "notes=${RELEASE_NOTES}" \
+                            -F "notes_type=0" \
+                            -F "ipa=@/tmp/$(echo $APP_NAME).ipa" \
+                            -H "X-HockeyAppToken: ${API_TOKEN}" \
+                            https://rink.hockeyapp.net/api/2/apps/${APP_ID}/app_versions | \
+                            while read upload_log
+                            do
+                                DATE=$( /bin/date +"%Y-%m-%d" )
+                            done
+
+                        fi
 
 					else
 						echo ${build_log}  \
@@ -233,14 +285,68 @@ elif [ ${APP_DEVICE} == "android" ]; then
 		bash -c "${ANDROID_SDK_PATH}/platform-tools/adb devices" | \
 		while read adb_output
 		do
-			if [ "${adb_output}" == "" ]; then
-				if [ "${device_found}" == "false" ]; then
-					echo "[ERROR] Could not find an attached android device with development mode enabled."
-					exit 0
-				fi
-			fi
 
-			if [ "${list_called}" == "True" ]; then
+            if [ $HOCKEY_ENABLED ]; then
+                bash -c "'${TI_ANDROID_BUILD}' build '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" | \
+                while read build_log
+                do
+                    echo "${build_log}" \
+                    | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
+                    if [[ "$build_log" == *zipalign* ]]; then
+                        sleep 2
+
+                        echo "APK is now located in: ${PROJECT_ROOT}/build/android/bin/app.apk"
+                        API_TOKEN=`cat tiapp.xml | grep "<hockey_api>" | sed -e "s/<\/*hockey_api>//g"`
+                        API_TOKEN=$(echo ${API_TOKEN//    /})
+                        APP_ID=`cat tiapp.xml | grep "<hockey_android_id>" | sed -e "s/<\/*hockey_android_id>//g"`
+                        APP_ID=$(echo ${APP_ID//    /})
+
+                        if [ "${API_TOKEN}" == '' -o "${APP_ID}" == '' ]; then
+                            echo "[ERROR] HockeyApp API key (hockey_api) and HockeyApp app ID (hockey_android_id) must be defined in your tiapp.xml to upload with HockeyApp"\
+                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
+                            exit 0
+                        fi
+
+                        echo "[INFO] Preping to upload to HockeyApp..."\
+                        | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
+                        APP="${PROJECT_ROOT}/build/android/bin/app.apk"
+
+                        echo "[INFO] Uploading .ipa to HockeyApp..." \
+                        | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
+                        if [ "${RELEASE_NOTES}" == '' ]; then
+                            RELEASE_NOTES='Build uploaded automatically from MakeTi.'
+                        fi
+
+                        echo "${APP_ID}"
+
+                        /usr/bin/curl \
+                        -F "status=2" \
+                        -F "notify=1" \
+                        -F "notes=${RELEASE_NOTES}" \
+                        -F "notes_type=0" \
+                        -F "ipa=@$(echo $APP)" \
+                        -H "X-HockeyAppToken: ${API_TOKEN}" \
+                        https://rink.hockeyapp.net/api/2/apps/${APP_ID}/app_versions
+                    fi
+                done
+
+            elif [ $APK_ONLY} ]; then
+
+                bash -c "'${TI_ANDROID_BUILD}' build '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
+                | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
+			elif [ "${list_called}" == "True" ]; then
+                if [ "${adb_output}" == "" ]; then
+                    if [ "${device_found}" == "false" ]; then
+                        echo "[ERROR] Could not find an attached android device with development mode enabled."
+                        exit 0
+                    fi
+                fi
+
 				device_found="True"
 
 				bash -c "'${TI_ANDROID_BUILD}' install '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \

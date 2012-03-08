@@ -37,6 +37,14 @@ To deploy the application on iPad, type:
 
 <pre>$ make clean && make deploy platform=ipad</pre>
 
+Android users also have an extra option of apkonly=true, so if you run:
+
+<pre>make clean && make deploy platform=andorid apkonly=true</pre>
+
+you will have an UNSIGNED (for dev use only, not for the market) located in:
+
+(your project dir)/build/android/bin/app.apk
+
 _* When you do a deploy on any iOS platform, it MakeTi will present to you a list of avaliable certs on your system, next to each cert is an id. you must re-run your deploy command using the cert you wish to use by adding cert=<id> to your command._
 
 h2. Build and deploy directly to TestFlight
@@ -55,6 +63,27 @@ I also added an optional notes feature like so:
 That note will then be deliverd in the email to your beta testers informing them of the new app being ready to download.
 
 _* Due to restrictions in the TestFlight API... if you dont set tf_dist in your Tiapp.xml... users wont get an email letting them know they can download till you go onto the testflight site and check them as users of the latest beta._
+
+h2. Build and deploy directly to HockeyKit
+
+Simply run
+<pre>$ make deploy hockeykit=true</pre>
+
+OR
+
+<pre>$ make deploy platform=android hockeykit=true</pre>
+
+To set your API key and app ID, simply add the following XML nodes to your tiapp.xml:
+hockey_api (required)
+hockey_ios_id (required for iOS upload, use the "Public app ID" HockeyKit provides)
+hockey_android_id (required for android upload, use the "Public app ID" HockeyKit provides)
+
+I also added an optional notes feature like so:
+<pre>$ make deploy hockeykit=true notes="This is Beta 3 on my app"</pre>
+
+That note will then be deliverd in the email to your beta testers informing them of the new app being ready to download.
+
+_* Please not, an app must first be manualy created in HockeyKit, MakeTi wont create an app for you._
 
 h2. How to install the Textmate bundle
 
