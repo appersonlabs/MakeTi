@@ -144,8 +144,8 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 				temp_array=(${line//{\"uuid\": \"/})
 
 				UUID=${temp_array[0]//\"/}
-                echo "'${TI_IPHONE_BUILD}' install ${iphone} '${PROJECT_ROOT}/' $(echo $APP_ID) '$(echo $APP_NAME)' '$(echo $UUID | sed -e "s/uuid: //g")' '${SIGNING_IDENTITY}'"
-				bash -c "'${TI_IPHONE_BUILD}' install ${iphone} '${PROJECT_ROOT}/' $(echo $APP_ID) '$(echo $APP_NAME)' '$(echo $UUID | sed -e "s/uuid: //g")' '${SIGNING_IDENTITY}'" | \
+                echo "'${TI_IPHONE_BUILD}' install ${iphone} '${PROJECT_ROOT}/' $(echo $APP_ID) '$(echo $APP_NAME)' '$(echo $UUID | sed -e "s/uuid: //g")' '${SIGNING_IDENTITY}' '$(echo ${APP_DEVICE})'"
+				bash -c "'${TI_IPHONE_BUILD}' install ${iphone} '${PROJECT_ROOT}/' $(echo $APP_ID) '$(echo $APP_NAME)' '$(echo $UUID | sed -e "s/uuid: //g")' '${SIGNING_IDENTITY}' '$(echo ${APP_DEVICE})'" | \
 				while read build_log
 				do
 
