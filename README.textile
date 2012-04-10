@@ -111,11 +111,7 @@ h2. To-Do
 
 - Deploy to AppStore / Marketplace
 
-- Build for device (Android)
-
 - Don't ask if I want to replace the existing version of the app in iTunes (iOS only)
-
-- Add HockeyKit support
 
 - Update the Textmate and SublimeText2 plugins for the new build options MakeTi offers (deploy to device and to testflight).
 
