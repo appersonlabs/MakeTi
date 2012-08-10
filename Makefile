@@ -54,7 +54,7 @@ deploy:
 	@echo "Building with Titanium... as ${BUILD_TYPE}"
 	@mkdir -p '${PROJECT_ROOT}/${PROJECT_NAME}/build/iphone/'
 	@mkdir -p '${PROJECT_ROOT}/${PROJECT_NAME}/build/android/'
-	PROJECT_ROOT='${PROJECT_ROOT}' DEVICE_TYPE=${DEVICE_TYPE} BUILD_TYPE='device' bash '${PROJECT_ROOT}/bin/titanium.sh'
+	PROJECT_ROOT='${PROJECT_ROOT}' DEVICE_TYPE=${DEVICE_TYPE} BUILD_TYPE='device' bash '${MAKETI_DIR}/bin/titanium.sh'
 
 clean:
 	@rm -rf '${PROJECT_ROOT}/build/iphone/'
