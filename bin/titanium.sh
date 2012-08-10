@@ -71,7 +71,7 @@ TI_IPHONE_BUILD="${TI_IPHONE_DIR}/builder.py"
 
 # Android settings
 if [ "${android}" == "" ]; then
-	android="10"
+	android="titanium_2_WVGA854"
 fi
 TI_ANDROID_DIR="${TI_ASSETS_DIR}/android"
 TI_ANDROID_BUILD="${TI_ANDROID_DIR}/builder.py"
