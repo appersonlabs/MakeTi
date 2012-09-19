@@ -6,7 +6,8 @@ Add the files from this repo to the root dir of your project and type one of the
 
 <pre>$ make run</pre>
 
-_* To change the SDK version, change the SDK version in your tiapp.xml._
+_* To change the SDK version, change the SDK version in your tiapp.xml if SDK version is omitted defaults to Newest SDK version._
+_* Optionally Set the iOS SDK version by adding <ios-version>(selected version)</ios-version> to your tiapp.xml._
 
 <pre>$ make run</pre>
 

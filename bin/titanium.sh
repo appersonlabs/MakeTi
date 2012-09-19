@@ -4,6 +4,8 @@
 PROJECT_ROOT=${PROJECT_ROOT:-../}
 APP_DEVICE=${DEVICE_TYPE}
 TI_SDK_VERSION=`cat tiapp.xml | grep "<sdk-version>" | sed -e "s/<\/*sdk-version>//g"`
+TI_SDK_HIGHEST_VERSION=`ls  ~/library/Application\ Support/titanium/mobilesdk/osx | tail -1`
+IOS_SDK_VERSION=`cat tiapp.xml | grep "<ios-version>" | sed -e "s/<\/*ios-version>//g"`
 TI_DIR="Library/Application Support/Titanium"
 BUILD_TYPE=${BUILD_TYPE}
 TESTFLIGHT_ENABLED=${testflight}
@@ -11,7 +13,6 @@ HOCKEY_ENABLED=${hockey}
 APK_ONLY=${justapk}
 RELEASE_NOTES=${notes}
 IPHONE_DEV_CERT=${cert}
-
 # Look all over for a titanium install
 for d in /Users/*
 do
@@ -43,7 +44,9 @@ fi
 if [ "${TI_SDK_VERSION}" == "" ]; then
 	if [ ! "${tisdk}" == "" ]; then
 		TI_SDK_VERSION="${tisdk}"
-	else
+	elif [ ! "${TI_SDK_HIGHEST_VERSION}" == "" ]; then
+    TI_SDK_VERSION="${TI_SDK_HIGHEST_VERSION}"
+  else
 		echo ""
 		echo "[ERROR] <sdk-version> is not defined in tiapp.xml, please define it, or add a tisdk argument to your command."
 		echo ""
@@ -64,7 +67,11 @@ fi
 
 # iPhone settings
 if [ "${iphone}" == "" ]; then
-	iphone="5.1"
+  if ["${IOS_SDK_VERSION}" == ""]; then
+	  iphone="5.1"
+  else
+    iphone="${IOS_SDK_VERSION}"
+  fi
 fi
 TI_IPHONE_DIR="${TI_ASSETS_DIR}/iphone"
 TI_IPHONE_BUILD="${TI_IPHONE_DIR}/builder.py"
