@@ -5,7 +5,7 @@ PROJECT_ROOT=${PROJECT_ROOT:-../}
 APP_DEVICE=${DEVICE_TYPE}
 TI_SDK_VERSION=`cat tiapp.xml | grep "<sdk-version>" | sed -e "s/<\/*sdk-version>//g"`
 TI_SDK_HIGHEST_VERSION=`ls  ~/library/Application\ Support/titanium/mobilesdk/osx | tail -1`
-IOS_SDK_VERSION=`cat tiapp.xml | grep "<ios-version>" | sed -e "s/<\/*ios-version>//g"`
+IOS_SDK_VERSION=`cat tiapp.xml | grep "<ios-version>" | sed -e "s/[ \t]*<\/*ios-version>//g"`
 TI_DIR="Library/Application Support/Titanium"
 BUILD_TYPE=${BUILD_TYPE}
 TESTFLIGHT_ENABLED=${testflight}
@@ -67,7 +67,7 @@ fi
 
 # iPhone settings
 if [ "${iphone}" == "" ]; then
-  if ["${IOS_SDK_VERSION}" == ""]; then
+  if [ "${IOS_SDK_VERSION}" == "" ]; then
 	  iphone="5.1"
   else
     iphone="${IOS_SDK_VERSION}"
