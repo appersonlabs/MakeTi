@@ -67,7 +67,7 @@ fi
 
 # iPhone settings
 if [ "${iphone}" == "" ]; then
-  if ["${IOS_SDK_VERSION}" == ""]; then
+  if [ "${IOS_SDK_VERSION}" == "" ]; then
 	  iphone="5.1"
   else
     iphone="${IOS_SDK_VERSION}"
