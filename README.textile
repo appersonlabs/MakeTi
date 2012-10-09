@@ -13,7 +13,7 @@ _* Optionally Set the iOS SDK version by adding <ios-version>(selected version)<
 
 To run the application on Android, type:
 
-<pre>$ make clean && make run platform=andorid</pre>
+<pre>$ make clean && make run platform=android</pre>
 
 To run the application on iPad, type:
 
@@ -32,7 +32,7 @@ After that, simply run
 
 To deploy the application on Android, type:
 
-<pre>$ make clean && make deploy platform=andorid</pre>
+<pre>$ make clean && make deploy platform=android</pre>
 
 To deploy the application on iPad, type:
 
@@ -40,7 +40,7 @@ To deploy the application on iPad, type:
 
 Android users also have an extra option of apkonly=true, so if you run:
 
-<pre>make clean && make deploy platform=andorid apkonly=true</pre>
+<pre>make clean && make deploy platform=android apkonly=true</pre>
 
 you will have an UNSIGNED (for dev use only, not for the market) apk located in:
 
