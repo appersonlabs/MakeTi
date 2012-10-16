@@ -55,6 +55,13 @@ if [ "${BUILD_ACTION}" == "adhoc" ]; then
 	PROFILE_TYPE=iphone_dist_name
 fi
 
+# provisioning profile name must be specified
+if [ "${PROVISIONING_PROFILE_NAME}" == "" ]; then
+	echo ""
+	echo "[WARN] Defaulting profile_file to 'development'."
+	echo ""
+fi
+
 
 # Make sure an SDK version is set
 if [ "${TI_SDK_VERSION}" == "" ]; then
