@@ -24,6 +24,7 @@ The default platform is iPhone
 _* You just have to use "make clean" before the run command if you change the device type. If you're using the same device between executions, it's not necessary to execute "make clean" because it will force Titanium to re-compile the entire project again, which is considerably slow._
 
 h2. Certificates
+
 When running the deploy command you can be asked for certificates.
 Select the right one (based on a numeric value), depending on your cert type, ie:
 
