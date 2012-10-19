@@ -32,7 +32,7 @@ Select the right one (based on a numeric value), depending on your cert type, ie
 
 h2. Actions (only for iOS)
 
-You can choose to deploy to device straight to iTunes or just create an adhoc build which you can either manually install to your device, distribute to your testers or manually upload to TestFlight.
+You can choose to deploy to device straight to iTunes or just create an adhoc build which you can either install to your device using iTunes, distribute to your testers or manually upload to TestFlight.
 
 <pre>make clean && make deploy action=adhoc</pre>
 
@@ -63,7 +63,7 @@ _* When you do a deploy on any iOS platform, it MakeTi will present to you a lis
 
 h2. Changing the provisioning cert
 
-You can change the certificate being used with the following flag:
+You can change the used certificate with the following flag:
 
 <pre>make deploy profile_file=enterprise</pre>
 
