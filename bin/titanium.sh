@@ -13,6 +13,11 @@ HOCKEY_ENABLED=${hockey}
 APK_ONLY=${justapk}
 RELEASE_NOTES=${notes}
 IPHONE_DEV_CERT=${cert}
+PROVISIONING_PROFILE_NAME=${profile_file}
+BUILD_ACTION=${action}
+PROFILE_TYPE=iphone_dev_name
+PACKAGE_APP=false
+
 # Look all over for a titanium install
 for d in /Users/*
 do
@@ -39,6 +44,25 @@ done
 if [ "${APP_DEVICE}" == "" ]; then
 	APP_DEVICE="iphone"
 fi
+
+# only install|adhoc are supported as install actions
+if [ ! "${BUILD_ACTION}" == "install" ] && [ ! "${BUILD_ACTION}" == "adhoc" ]; then
+	echo ""
+	echo "[WARN] Only action=install and action=adhoc are supported. Choosing action=install."
+	echo ""
+fi
+
+if [ "${BUILD_ACTION}" == "adhoc" ]; then
+	PROFILE_TYPE=iphone_dist_name
+fi
+
+# provisioning profile name must be specified
+if [ "${PROVISIONING_PROFILE_NAME}" == "" ]; then
+	echo ""
+	echo "[WARN] Defaulting profile_file to 'development'."
+	echo ""
+fi
+
 
 # Make sure an SDK version is set
 if [ "${TI_SDK_VERSION}" == "" ]; then
@@ -112,7 +136,7 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 		bash -c "'${TI_IPHONE_DIR}/prereq.py' package" | \
 		while read prov
 		do
-			temp_iphone_dev_names=`echo $prov | python -c 'import json,sys;obj=json.loads(sys.stdin.read());print obj["'"iphone_dev_name"'"]'| sed 's/ u//g' | sed 's/\[u//g' | sed 's/\[//g'| sed 's/\]//g'| sed "s/\ '//g"| sed "s/\'//g"`
+			temp_iphone_dev_names=`echo $prov | python -c 'import json,sys;obj=json.loads(sys.stdin.read());print obj["'"$PROFILE_TYPE"'"]'| sed 's/ u//g' | sed 's/\[u//g' | sed 's/\[//g'| sed 's/\]//g'| sed "s/\ '//g"| sed "s/\'//g"`
 			IFS=,
 			IPHONE_DEV_NAMES=(${temp_iphone_dev_names//,iphone_dev_name:/})
 
@@ -134,10 +158,10 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 			fi
 
 			SIGNING_IDENTITY=${IPHONE_DEV_NAMES[$IPHONE_DEV_CERT]}
-			PROVISIONING_PROFILE="${PROJECT_ROOT}/certs/development.mobileprovision"
+			PROVISIONING_PROFILE="${PROJECT_ROOT}/certs/$PROVISIONING_PROFILE_NAME.mobileprovision"
 
-            if [ ! -r 'certs/development.mobileprovision' ];then
-				echo "You must have a file called ${PROVISIONING_PROFILE} to beild for device..."
+            if [ ! -r 'certs/'$PROVISIONING_PROFILE_NAME'.mobileprovision' ];then
+				echo "You must have a file called ${PROVISIONING_PROFILE} to build for device..."
 				exit
             fi
 
@@ -151,15 +175,45 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 				temp_array=(${line//{\"uuid\": \"/})
 
 				UUID=${temp_array[0]//\"/}
-                echo "'${TI_IPHONE_BUILD}' install ${iphone} '${PROJECT_ROOT}/' $(echo $APP_ID) '$(echo $APP_NAME)' '$(echo $UUID | sed -e "s/uuid: //g")' '${SIGNING_IDENTITY}' '$(echo ${APP_DEVICE})'"
-				bash -c "'${TI_IPHONE_BUILD}' install ${iphone} '${PROJECT_ROOT}/' $(echo $APP_ID) '$(echo $APP_NAME)' '$(echo $UUID | sed -e "s/uuid: //g")' '${SIGNING_IDENTITY}' '$(echo ${APP_DEVICE})'" | \
+                echo "'${TI_IPHONE_BUILD}' $BUILD_ACTION ${iphone} '${PROJECT_ROOT}/' $(echo $APP_ID) '$(echo $APP_NAME)' '$(echo $UUID | sed -e "s/uuid: //g")' '${SIGNING_IDENTITY}' '$(echo ${APP_DEVICE})'"
+				bash -c "'${TI_IPHONE_BUILD}' $BUILD_ACTION ${iphone} '${PROJECT_ROOT}/' $(echo $APP_ID) '$(echo $APP_NAME)' '$(echo $UUID | sed -e "s/uuid: //g")' '${SIGNING_IDENTITY}' '$(echo ${APP_DEVICE})'" | \
 				while read build_log
 				do
+					MAY_SYNC=0
+					if [ $BUILD_ACTION == "install" ] && [ "${build_log}" == '[INFO] iTunes sync initiated' ]; then
+						MAY_SYNC=1
+						BUILD_LOCATION="Debug-iphoneos"
+					elif [ $BUILD_ACTION == "adhoc" ] && [[ "${build_log}" =~ 'PackageApplication' ]]; then
+						MAY_SYNC=1
+						BUILD_LOCATION="Release-iphoneos"
+						SIGNING_IDENTITY="iPhone Distribution: $SIGNING_IDENTITY"
+						PACKAGE_APP=true
+					fi
 
-					if [ "${build_log}" == '[INFO] iTunes sync initiated' ]; then
-
+					if [ $MAY_SYNC -eq 1 ]; then
 						echo "[INFO] Done building app..."\
 						| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
+						APP="${PROJECT_ROOT}/build/iphone/build/$BUILD_LOCATION/$(echo $APP_NAME).app"
+						
+						# Check if TestFlight or Hockey deploy was mandated
+						if [ $TESTFLIGHT_ENABLED ] || [ $HOCKEY_ENABLED ]; then
+							PACKAGE_APP=true
+						fi
+						
+						if [ $PACKAGE_APP ]; then
+							echo "[INFO] Creating .ipa from compiled app"\
+							| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+
+							if [ -f /tmp/$(echo $APP_NAME).ipa ]; then
+								/bin/rm "/tmp/$(echo $APP_NAME).ipa"
+							fi
+							/usr/bin/xcrun -sdk iphoneos PackageApplication -v "${APP}" -o "/tmp/$(echo $APP_NAME).ipa" --sign "${SIGNING_IDENTITY}" --embed "${PROVISIONING_PROFILE}" | \
+							while read package_log
+							do
+								DATE=$( /bin/date +"%Y-%m-%d" )
+							done
+						fi
 
 						if [ $TESTFLIGHT_ENABLED ]; then
 
@@ -178,17 +232,6 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 							echo "[INFO] Preping to upload to TestFlight..."\
 							| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 
-							APP="${PROJECT_ROOT}/build/iphone/build/Debug-iphoneos/$(echo $APP_NAME).app"
-
-							echo "[INFO] Creating .ipa from compiled app"\
-							| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
-
-							/bin/rm "/tmp/$(echo $APP_NAME).ipa"
-							/usr/bin/xcrun -sdk iphoneos PackageApplication -v "${APP}" -o "/tmp/$(echo $APP_NAME).ipa" --sign "${SIGNING_IDENTITY}" --embed "${PROVISIONING_PROFILE}" | \
-							while read package_log
-							do
-								DATE=$( /bin/date +"%Y-%m-%d" )
-							done
 							echo "[INFO] Uploading .ipa to TestFlight..." \
 							| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 
@@ -228,17 +271,6 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
                             echo "[INFO] Preping to upload to HockeyApp..."\
                             | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 
-                            APP="${PROJECT_ROOT}/build/iphone/build/Debug-iphoneos/$(echo $APP_NAME).app"
-
-                            echo "[INFO] Creating .ipa from compiled app"\
-                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
-
-                            /bin/rm "/tmp/$(echo $APP_NAME).ipa"
-                            /usr/bin/xcrun -sdk iphoneos PackageApplication -v "${APP}" -o "/tmp/$(echo $APP_NAME).ipa" --sign "${SIGNING_IDENTITY}" --embed "${PROVISIONING_PROFILE}" | \
-                            while read package_log
-                            do
-                                DATE=$( /bin/date +"%Y-%m-%d" )
-                            done
                             echo "[INFO] Uploading .ipa to HockeyApp..." \
                             | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
 

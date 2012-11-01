@@ -23,6 +23,19 @@ The default platform is iPhone
 
 _* You just have to use "make clean" before the run command if you change the device type. If you're using the same device between executions, it's not necessary to execute "make clean" because it will force Titanium to re-compile the entire project again, which is considerably slow._
 
+h2. Certificates
+
+When running the deploy command you can be asked for certificates.
+Select the right one (based on a numeric value), depending on your cert type, ie:
+
+<pre>make deploy cert=0</pre>
+
+h2. Actions (only for iOS)
+
+You can choose to deploy to device straight to iTunes or just create an adhoc build which you can either install to your device using iTunes, distribute to your testers or manually upload to TestFlight.
+
+<pre>make clean && make deploy action=adhoc</pre>
+
 h2. How to run on your device
 
 To run your app on an iOS device you must simply add your development cert to <project dir>/certs/development.mobileprovision Creating the crets dir if needed.
@@ -47,6 +60,15 @@ you will have an UNSIGNED (for dev use only, not for the market) apk located in:
 (your project dir)/build/android/bin/app.apk
 
 _* When you do a deploy on any iOS platform, it MakeTi will present to you a list of avaliable certs on your system, next to each cert is an id. you must re-run your deploy command using the cert you wish to use by adding cert=<id> to your command._
+
+h2. Changing the provisioning cert
+
+You can change the used certificate with the following flag:
+
+<pre>make deploy profile_file=enterprise</pre>
+
+This will load the provisioning cert file from <project dir>/certs/enterprise.mobileprovision
+
 
 h2. Build and deploy directly to TestFlight
 
