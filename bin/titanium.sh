@@ -17,6 +17,16 @@ PROVISIONING_PROFILE_NAME=${profile_file}
 BUILD_ACTION=${action}
 PROFILE_TYPE=iphone_dev_name
 PACKAGE_APP=false
+NO_COLOR=${no_color}
+
+function pretty_print {
+	if [ $NO_COLOR ]
+	then
+		exec perl -pe ''
+	else
+		exec perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+	fi
+}
 
 # Look all over for a titanium install
 for d in /Users/*
@@ -92,7 +102,7 @@ fi
 # iPhone settings
 if [ "${iphone}" == "" ]; then
   if [ "${IOS_SDK_VERSION}" == "" ]; then
-	  iphone="5.1"
+	  iphone="6.0"
   else
     iphone="${IOS_SDK_VERSION}"
   fi
@@ -128,7 +138,7 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 		fi
 		echo "'${TI_IPHONE_BUILD}' run '${PROJECT_ROOT}/' ${iphone} ${APP_ID} '${APP_NAME}' ${APP_DEVICE}"
 		bash -c "'${TI_IPHONE_BUILD}' run '${PROJECT_ROOT}/' ${iphone} ${APP_ID} '${APP_NAME}' ${APP_DEVICE}" \
-		| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+		| pretty_print
 
 	# Build an IPA and load it through iTunes
 	else
@@ -192,18 +202,18 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
 					if [ $MAY_SYNC -eq 1 ]; then
 						echo "[INFO] Done building app..."\
-						| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+						| pretty_print
 
 						APP="${PROJECT_ROOT}/build/iphone/build/$BUILD_LOCATION/$(echo $APP_NAME).app"
-						
+
 						# Check if TestFlight or Hockey deploy was mandated
 						if [ $TESTFLIGHT_ENABLED ] || [ $HOCKEY_ENABLED ]; then
 							PACKAGE_APP=true
 						fi
-						
+
 						if [ $PACKAGE_APP ]; then
 							echo "[INFO] Creating .ipa from compiled app"\
-							| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+							| pretty_print
 
 							if [ -f /tmp/$(echo $APP_NAME).ipa ]; then
 								/bin/rm "/tmp/$(echo $APP_NAME).ipa"
@@ -224,16 +234,16 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
 							if [ "${API_TOKEN}" == '' -o "${TEAM_TOKEN}" == '' ]; then
 								echo "[ERROR] Testflight API key (tf_api) and Testflight team token (tf_token) must be defined in your tiapp.xml to upload with testflight"\
-								| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+								| pretty_print
 
 								exit 0
 							fi
 
 							echo "[INFO] Preping to upload to TestFlight..."\
-							| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+							| pretty_print
 
 							echo "[INFO] Uploading .ipa to TestFlight..." \
-							| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+							| pretty_print
 
 							if [ "${RELEASE_NOTES}" == '' ]; then
 								RELEASE_NOTES='Build uploaded automatically from MakeTi.'
@@ -263,16 +273,16 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
                             if [ "${API_TOKEN}" == '' -o "${APP_ID}" == '' ]; then
                                 echo "[ERROR] HockeyApp API key (hockey_api) and HockeyApp app ID (hockey_id) must be defined in your tiapp.xml to upload with HockeyApp"\
-                                | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                                | pretty_print
 
                                 exit 0
                             fi
 
                             echo "[INFO] Preping to upload to HockeyApp..."\
-                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                            | pretty_print
 
                             echo "[INFO] Uploading .ipa to HockeyApp..." \
-                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                            | pretty_print
 
                             if [ "${RELEASE_NOTES}" == '' ]; then
                                 RELEASE_NOTES='Build uploaded automatically from MakeTi.'
@@ -295,7 +305,7 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
 					else
 						echo ${build_log}  \
-						| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+						| pretty_print
 					fi
 				done
 			done
@@ -312,7 +322,7 @@ elif [ ${APP_DEVICE} == "android" ]; then
 		# Check for Android Virtual Device (AVD)
 		if [ "$(ps -Ac | egrep -i 'emulator-arm' | awk '{print $1}')" ]; then
 			bash -c "'${TI_ANDROID_BUILD}' simulator '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android} && adb logcat | grep Ti" \
-			| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+			| pretty_print
 		else
 			echo "[ERROR] Could not find a running emulator."
 		  	echo "[ERROR] Run this command in a separate terminal session: ${ANDROID_SDK_PATH}/tools/emulator-arm -avd ${android}"
@@ -330,7 +340,7 @@ elif [ ${APP_DEVICE} == "android" ]; then
                 while read build_log
                 do
                     echo "${build_log}" \
-                    | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                    | pretty_print
 
                     if [[ "$build_log" == *zipalign* ]]; then
                         sleep 2
@@ -343,18 +353,18 @@ elif [ ${APP_DEVICE} == "android" ]; then
 
                         if [ "${API_TOKEN}" == '' -o "${APP_ID}" == '' ]; then
                             echo "[ERROR] HockeyApp API key (hockey_api) and HockeyApp app ID (hockey_android_id) must be defined in your tiapp.xml to upload with HockeyApp"\
-                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                            | pretty_print
 
                             exit 0
                         fi
 
                         echo "[INFO] Preping to upload to HockeyApp..."\
-                        | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                        | pretty_print
 
                         APP="${PROJECT_ROOT}/build/android/bin/app.apk"
 
                         echo "[INFO] Uploading .ipa to HockeyApp..." \
-                        | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                        | pretty_print
 
                         if [ "${RELEASE_NOTES}" == '' ]; then
                             RELEASE_NOTES='Build uploaded automatically from MakeTi.'
@@ -376,7 +386,7 @@ elif [ ${APP_DEVICE} == "android" ]; then
             elif [ ${APK_ONLY} ]; then
 
                 bash -c "'${TI_ANDROID_BUILD}' build '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
-                | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                | pretty_print
 
 			elif [ "${list_called}" == "True" ]; then
                 if [ "${adb_output}" == "" ]; then
@@ -389,7 +399,7 @@ elif [ ${APP_DEVICE} == "android" ]; then
 				device_found="True"
 
 				bash -c "'${TI_ANDROID_BUILD}' install '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
-				| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+				| pretty_print
 				break
 			fi
 
@@ -414,7 +424,7 @@ elif [ ${APP_DEVICE} == "web" ]; then
 	fi
 
 	bash -c "'/usr/bin/python' '${TI_ASSETS_DIR}/mobileweb/builder.py' '${PROJECT_ROOT}' 'development'" \
-	| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+	| pretty_print
 
 	echo "Files are now located in '${PROJECT_ROOT}/build/mobileweb/' Copy to a webserver and launch index.html in a web browser"
 	# bash -c "open '${PROJECT_ROOT}/build/mobileweb/index.html'"
