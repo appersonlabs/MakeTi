@@ -60,6 +60,7 @@ if [ ! "${BUILD_ACTION}" == "install" ] && [ ! "${BUILD_ACTION}" == "adhoc" ]; t
 	echo ""
 	echo "[WARN] Only action=install and action=adhoc are supported. Choosing action=install."
 	echo ""
+	BUILD_ACTION="install"
 fi
 
 if [ "${BUILD_ACTION}" == "adhoc" ]; then
@@ -71,6 +72,7 @@ if [ "${PROVISIONING_PROFILE_NAME}" == "" ]; then
 	echo ""
 	echo "[WARN] Defaulting profile_file to 'development'."
 	echo ""
+	PROVISIONING_PROFILE_NAME="development"
 fi
 
 
@@ -168,10 +170,10 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 			fi
 
 			SIGNING_IDENTITY=${IPHONE_DEV_NAMES[$IPHONE_DEV_CERT]}
-			PROVISIONING_PROFILE="${PROJECT_ROOT}/certs/$PROVISIONING_PROFILE_NAME.mobileprovision"
+			PROVISIONING_PROFILE="${PROJECT_ROOT}/certs/${PROVISIONING_PROFILE_NAME}.mobileprovision"
 
             if [ ! -r 'certs/'$PROVISIONING_PROFILE_NAME'.mobileprovision' ];then
-				echo "You must have a file called ${PROVISIONING_PROFILE} to build for device..."
+				echo "You must have a file called ${PROVISIONING_PROFILE_NAME} to build for device..."
 				exit
             fi
 
