@@ -10,7 +10,7 @@ TI_DIR="Library/Application Support/Titanium"
 BUILD_TYPE=${BUILD_TYPE}
 TESTFLIGHT_ENABLED=${testflight}
 HOCKEY_ENABLED=${hockey}
-APK_ONLY=${justapk}
+APK_ONLY=${apkonly}
 RELEASE_NOTES=${notes}
 IPHONE_DEV_CERT=${cert}
 PROVISIONING_PROFILE_NAME=${profile_file}
@@ -318,9 +318,11 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 	fi
 
 elif [ ${APP_DEVICE} == "android" ]; then
-
 	# Run the app in the simulator
-	if [ "${BUILD_TYPE}" == "" ]; then
+	if [ ${APK_ONLY} ]; then
+    	bash -c "'${TI_ANDROID_BUILD}' build '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
+    		| pretty_print
+	elif [ "${BUILD_TYPE}" == "" ]; then
 		# Check for Android Virtual Device (AVD)
 		if [ "$(ps -Ac | egrep -i 'emulator-arm' | awk '{print $1}')" ]; then
 			bash -c "'${TI_ANDROID_BUILD}' simulator '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android} && adb logcat | grep Ti" \
@@ -384,12 +386,6 @@ elif [ ${APP_DEVICE} == "android" ]; then
                         https://rink.hockeyapp.net/api/2/apps/${APP_ID}/app_versions
                     fi
                 done
-
-            elif [ ${APK_ONLY} ]; then
-
-                bash -c "'${TI_ANDROID_BUILD}' build '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
-                | pretty_print
-
 			elif [ "${list_called}" == "True" ]; then
                 if [ "${adb_output}" == "" ]; then
                     if [ "${device_found}" == "false" ]; then
