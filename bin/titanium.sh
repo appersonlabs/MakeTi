@@ -28,27 +28,7 @@ function pretty_print {
 	fi
 }
 
-# Look all over for a titanium install
-for d in /Users/*
-do
-    if [ -d "$d/${TI_DIR}" ]
-    then
-        TI_DIR="$d/${TI_DIR}"
-        echo "[DEBUG] Titanium exists..."
-
-        break
-    else
-        echo "[DEBUG] Titanium not found... Testing another directory"
-
-        # not the most efficient place to have this, but it gets the job done
-		if [ -d "/$TI_DIR" ]; then
-            TI_DIR="/${TI_DIR}"
-			echo "[DEBUG] Titanium found..."
-
-			break
-		fi
-    fi
-done
+[[ -z "$ANDROID_SDK_PATH" ]] && ANDROID_SDK_PATH="${HOME}/Android"
 
 # if no platform is set, use iphone as a default
 if [ "${APP_DEVICE}" == "" ]; then
@@ -77,8 +57,8 @@ fi
 
 
 # Make sure an SDK version is set
-if [ "${TI_SDK_VERSION}" == "" ]; then
-	if [ ! "${tisdk}" == "" ]; then
+if [[ -z "$TI_SDK_VERSION" ]]; then
+	if [[ -n "$tisdk" ]]; then
 		TI_SDK_VERSION="${tisdk}"
 	elif [ ! "${TI_SDK_HIGHEST_VERSION}" == "" ]; then
     TI_SDK_VERSION="${TI_SDK_HIGHEST_VERSION}"
@@ -90,12 +70,29 @@ if [ "${TI_SDK_VERSION}" == "" ]; then
 	fi
 fi
 
-# Both iOS and Android SDKs are linked in this directory
-TI_ASSETS_DIR="$TI_DIR/mobilesdk/osx/$(echo $TI_SDK_VERSION)"
+if [[ -n "$TITANIUM_PATH" ]]; then
+	TI_DIR="$TITANIUM_PATH"
+else
+	# Look all over for a titanium install
+	search_locations=(
+		"${HOME}/Library/Application Support/Titanium"
+		"/Library/Application Support/Titanium"
+		"${HOME}/.titanium"
+	)
+	for d in "${search_locations[@]}"; do
+		if [[ -d "${d}/mobilesdk/osx/${TI_SDK_VERSION}" ]]; then
+			echo "[DEBUG] Found Titanium SDK for ${TI_SDK_VERSION} at $d"
+			TI_DIR="$d"
+			break
+		fi
+	done
+fi
 
-# Make sure this version exists
-if [ -d "${TI_ASSETS_DIR}" ]; then
-	echo "[DEBUG] Titanium SDK $(echo $TI_SDK_VERSION) found..."
+# Both iOS and Android SDKs are linked in this directory
+TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/${TI_SDK_VERSION}"
+
+if [[ -d "$TI_ASSETS_DIR" ]]; then
+	echo "[DEBUG] Titanium SDK ${TI_SDK_VERSION} found..."
 else
 	echo "[ERROR] Titanium SDK $(echo $TI_SDK_VERSION) not found... "
 	exit 1
@@ -118,7 +115,6 @@ if [ "${android}" == "" ]; then
 fi
 TI_ANDROID_DIR="${TI_ASSETS_DIR}/android"
 TI_ANDROID_BUILD="${TI_ANDROID_DIR}/builder.py"
-ANDROID_SDK_PATH='~/Android'
 
 # Get APP parameters from current tiapp.xml
 APP_ID=`cat tiapp.xml | grep "<id>" | sed -e "s/<\/*id>//g"`
@@ -318,6 +314,12 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 	fi
 
 elif [ ${APP_DEVICE} == "android" ]; then
+
+	if [[ -d "$ANDROID_SDK_PATH" ]]; then
+		echo "[ERROR] Android SDK not found. Did you set your ANDROID_SDK_PATH environemnt variable?"
+		exit 127
+	fi
+
 	# Run the app in the simulator
 	if [ ${APK_ONLY} ]; then
     	bash -c "'${TI_ANDROID_BUILD}' build '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
