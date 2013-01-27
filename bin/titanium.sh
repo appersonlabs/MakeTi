@@ -38,7 +38,7 @@ fi
 # only install|adhoc are supported as install actions
 if [ ! "${BUILD_ACTION}" == "install" ] && [ ! "${BUILD_ACTION}" == "adhoc" ]; then
 	echo ""
-	echo "[WARN] Only action=install and action=adhoc are supported. Choosing action=install."
+	echo "[WARN] Only action=install and action=adhoc are supported. Choosing action=install." >&2
 	echo ""
 	BUILD_ACTION="install"
 fi
@@ -50,7 +50,7 @@ fi
 # provisioning profile name must be specified
 if [ "${PROVISIONING_PROFILE_NAME}" == "" ]; then
 	echo ""
-	echo "[WARN] Defaulting profile_file to 'development'."
+	echo "[WARN] Defaulting profile_file to 'development'." >&2
 	echo ""
 	PROVISIONING_PROFILE_NAME="development"
 fi
@@ -64,7 +64,7 @@ if [[ -z "$TI_SDK_VERSION" ]]; then
     TI_SDK_VERSION="${TI_SDK_HIGHEST_VERSION}"
   else
 		echo ""
-		echo "[ERROR] <sdk-version> is not defined in tiapp.xml, please define it, or add a tisdk argument to your command."
+		echo "[ERROR] <sdk-version> is not defined in tiapp.xml, please define it, or add a tisdk argument to your command." >&2
 		echo ""
 		exit 1
 	fi
@@ -94,7 +94,7 @@ TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/${TI_SDK_VERSION}"
 if [[ -d "$TI_ASSETS_DIR" ]]; then
 	echo "[DEBUG] Titanium SDK ${TI_SDK_VERSION} found..."
 else
-	echo "[ERROR] Titanium SDK $(echo $TI_SDK_VERSION) not found... "
+	echo "[ERROR] Titanium SDK for ${TI_SDK_VERSION} not found. You could try setting TITANIUM_PATH." >&2
 	exit 1
 fi
 
@@ -122,7 +122,7 @@ APP_NAME=`cat tiapp.xml | grep "<name>" | sed -e "s/<\/*name>//g"`
 APP_NAME=$(echo ${APP_NAME//    /})
 
 if [ "APP_ID" == "" ] || [ "APP_NAME" == "" ]; then
-	echo "[ERROR] Could not obtain APP parameters from tiapp.xml file (does the file exist?)."
+	echo "[ERROR] Could not obtain APP parameters from tiapp.xml file (does the file exist?)." >&2
 	exit 1
 fi
 
@@ -316,7 +316,7 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 elif [ ${APP_DEVICE} == "android" ]; then
 
 	if [[ -d "$ANDROID_SDK_PATH" ]]; then
-		echo "[ERROR] Android SDK not found. Did you set your ANDROID_SDK_PATH environemnt variable?"
+		echo "[ERROR] Android SDK not found. Did you set your ANDROID_SDK_PATH environemnt variable?" >&2
 		exit 127
 	fi
 
@@ -391,7 +391,7 @@ elif [ ${APP_DEVICE} == "android" ]; then
 			elif [ "${list_called}" == "True" ]; then
                 if [ "${adb_output}" == "" ]; then
                     if [ "${device_found}" == "false" ]; then
-                        echo "[ERROR] Could not find an attached android device with development mode enabled."
+                        echo "[ERROR] Could not find an attached android device with development mode enabled." >&2
                         exit 0
                     fi
                 fi
@@ -426,10 +426,10 @@ elif [ ${APP_DEVICE} == "web" ]; then
 	bash -c "'/usr/bin/python' '${TI_ASSETS_DIR}/mobileweb/builder.py' '${PROJECT_ROOT}' 'development'" \
 	| pretty_print
 
-	echo "Files are now located in '${PROJECT_ROOT}/build/mobileweb/' Copy to a webserver and launch index.html in a web browser"
+	echo "Files are now located in '${PROJECT_ROOT}/build/mobileweb/' Copy to a webserver and launch index.html in a web browser" >&2
 	# bash -c "open '${PROJECT_ROOT}/build/mobileweb/index.html'"
 
 else
-	echo "[ERROR] platform ${APP_DEVICE} is not supported!"
+	echo "[ERROR] platform ${APP_DEVICE} is not supported!" >&2
 	echo ${APP_DEVICE}
 fi
