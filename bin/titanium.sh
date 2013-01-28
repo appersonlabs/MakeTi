@@ -28,27 +28,7 @@ function pretty_print {
 	fi
 }
 
-# Look all over for a titanium install
-for d in /Users/*
-do
-    if [ -d "$d/${TI_DIR}" ]
-    then
-        TI_DIR="$d/${TI_DIR}"
-        echo "[DEBUG] Titanium exists..."
-
-        break
-    else
-        echo "[DEBUG] Titanium not found... Testing another directory"
-
-        # not the most efficient place to have this, but it gets the job done
-		if [ -d "/$TI_DIR" ]; then
-            TI_DIR="/${TI_DIR}"
-			echo "[DEBUG] Titanium found..."
-
-			break
-		fi
-    fi
-done
+[[ -z "$ANDROID_SDK_PATH" ]] && ANDROID_SDK_PATH="${HOME}/Android"
 
 # if no platform is set, use iphone as a default
 if [ "${APP_DEVICE}" == "" ]; then
@@ -58,7 +38,7 @@ fi
 # only install|adhoc are supported as install actions
 if [ ! "${BUILD_ACTION}" == "install" ] && [ ! "${BUILD_ACTION}" == "adhoc" ]; then
 	echo ""
-	echo "[WARN] Only action=install and action=adhoc are supported. Choosing action=install."
+	echo "[WARN] Only action=install and action=adhoc are supported. Choosing action=install." >&2
 	echo ""
 	BUILD_ACTION="install"
 fi
@@ -70,34 +50,51 @@ fi
 # provisioning profile name must be specified
 if [ "${PROVISIONING_PROFILE_NAME}" == "" ]; then
 	echo ""
-	echo "[WARN] Defaulting profile_file to 'development'."
+	echo "[WARN] Defaulting profile_file to 'development'." >&2
 	echo ""
 	PROVISIONING_PROFILE_NAME="development"
 fi
 
 
 # Make sure an SDK version is set
-if [ "${TI_SDK_VERSION}" == "" ]; then
-	if [ ! "${tisdk}" == "" ]; then
+if [[ -z "$TI_SDK_VERSION" ]]; then
+	if [[ -n "$tisdk" ]]; then
 		TI_SDK_VERSION="${tisdk}"
 	elif [ ! "${TI_SDK_HIGHEST_VERSION}" == "" ]; then
     TI_SDK_VERSION="${TI_SDK_HIGHEST_VERSION}"
   else
 		echo ""
-		echo "[ERROR] <sdk-version> is not defined in tiapp.xml, please define it, or add a tisdk argument to your command."
+		echo "[ERROR] <sdk-version> is not defined in tiapp.xml, please define it, or add a tisdk argument to your command." >&2
 		echo ""
 		exit 1
 	fi
 fi
 
-# Both iOS and Android SDKs are linked in this directory
-TI_ASSETS_DIR="$TI_DIR/mobilesdk/osx/$(echo $TI_SDK_VERSION)"
-
-# Make sure this version exists
-if [ -d "${TI_ASSETS_DIR}" ]; then
-	echo "[DEBUG] Titanium SDK $(echo $TI_SDK_VERSION) found..."
+if [[ -n "$TITANIUM_PATH" ]]; then
+	TI_DIR="$TITANIUM_PATH"
 else
-	echo "[ERROR] Titanium SDK $(echo $TI_SDK_VERSION) not found... "
+	# Look all over for a titanium install
+	search_locations=(
+		"${HOME}/Library/Application Support/Titanium"
+		"/Library/Application Support/Titanium"
+		"${HOME}/.titanium"
+	)
+	for d in "${search_locations[@]}"; do
+		if [[ -d "${d}/mobilesdk/osx/${TI_SDK_VERSION}" ]]; then
+			echo "[DEBUG] Found Titanium SDK for ${TI_SDK_VERSION} at $d"
+			TI_DIR="$d"
+			break
+		fi
+	done
+fi
+
+# Both iOS and Android SDKs are linked in this directory
+TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/${TI_SDK_VERSION}"
+
+if [[ -d "$TI_ASSETS_DIR" ]]; then
+	echo "[DEBUG] Titanium SDK ${TI_SDK_VERSION} found..."
+else
+	echo "[ERROR] Titanium SDK for ${TI_SDK_VERSION} not found. You could try setting TITANIUM_PATH." >&2
 	exit 1
 fi
 
@@ -118,7 +115,6 @@ if [ "${android}" == "" ]; then
 fi
 TI_ANDROID_DIR="${TI_ASSETS_DIR}/android"
 TI_ANDROID_BUILD="${TI_ANDROID_DIR}/builder.py"
-ANDROID_SDK_PATH='~/Android'
 
 # Get APP parameters from current tiapp.xml
 APP_ID=`cat tiapp.xml | grep "<id>" | sed -e "s/<\/*id>//g"`
@@ -126,7 +122,7 @@ APP_NAME=`cat tiapp.xml | grep "<name>" | sed -e "s/<\/*name>//g"`
 APP_NAME=$(echo ${APP_NAME//    /})
 
 if [ "APP_ID" == "" ] || [ "APP_NAME" == "" ]; then
-	echo "[ERROR] Could not obtain APP parameters from tiapp.xml file (does the file exist?)."
+	echo "[ERROR] Could not obtain APP parameters from tiapp.xml file (does the file exist?)." >&2
 	exit 1
 fi
 
@@ -318,6 +314,12 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 	fi
 
 elif [ ${APP_DEVICE} == "android" ]; then
+
+	if [[ -d "$ANDROID_SDK_PATH" ]]; then
+		echo "[ERROR] Android SDK not found. Did you set your ANDROID_SDK_PATH environemnt variable?" >&2
+		exit 127
+	fi
+
 	# Run the app in the simulator
 	if [ ${APK_ONLY} ]; then
     	bash -c "'${TI_ANDROID_BUILD}' build '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
@@ -389,7 +391,7 @@ elif [ ${APP_DEVICE} == "android" ]; then
 			elif [ "${list_called}" == "True" ]; then
                 if [ "${adb_output}" == "" ]; then
                     if [ "${device_found}" == "false" ]; then
-                        echo "[ERROR] Could not find an attached android device with development mode enabled."
+                        echo "[ERROR] Could not find an attached android device with development mode enabled." >&2
                         exit 0
                     fi
                 fi
@@ -424,10 +426,10 @@ elif [ ${APP_DEVICE} == "web" ]; then
 	bash -c "'/usr/bin/python' '${TI_ASSETS_DIR}/mobileweb/builder.py' '${PROJECT_ROOT}' 'development'" \
 	| pretty_print
 
-	echo "Files are now located in '${PROJECT_ROOT}/build/mobileweb/' Copy to a webserver and launch index.html in a web browser"
+	echo "Files are now located in '${PROJECT_ROOT}/build/mobileweb/' Copy to a webserver and launch index.html in a web browser" >&2
 	# bash -c "open '${PROJECT_ROOT}/build/mobileweb/index.html'"
 
 else
-	echo "[ERROR] platform ${APP_DEVICE} is not supported!"
+	echo "[ERROR] platform ${APP_DEVICE} is not supported!" >&2
 	echo ${APP_DEVICE}
 fi
