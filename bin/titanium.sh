@@ -3,7 +3,7 @@
 # Utility script to start Titanium Mobile project from the command line.
 PROJECT_ROOT=${PROJECT_ROOT:-../}
 APP_DEVICE=${DEVICE_TYPE}
-TI_SDK_VERSION=`cat tiapp.xml | grep "<sdk-version>" | sed -e "s/<\/*sdk-version>//g"`
+TI_SDK_VERSION=`cat tiapp.xml | grep "<sdk-version>" | tr -d | sed -e "s/<\/*sdk-version>//g"`
 TI_SDK_HIGHEST_VERSION=`ls  ~/library/Application\ Support/titanium/mobilesdk/osx | tail -1`
 IOS_SDK_VERSION=`cat tiapp.xml | grep "<ios-version>" | sed -e "s/[ \t]*<\/*ios-version>//g"`
 TI_DIR="Library/Application Support/Titanium"
